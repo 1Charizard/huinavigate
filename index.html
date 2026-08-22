@@ -4,74 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>huinavigate — 1Charizard</title>
-  <meta name="description" content="1Charizard 的沉浸式 3D 个人主页 — 探索、构建、创造。">
+  <meta name="description" content="huinavigate — 探索、构建、创造。1Charizard 的个人主页。">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪂</text></svg>">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- 全屏渐变背景(水晶感) -->
+  <!-- 全屏粉嫩水晶渐变背景 -->
   <div class="bg-scene" aria-hidden="true"></div>
-  <!-- 3D 粒子层 (three.js, 透明) -->
-  <canvas id="scene-canvas" aria-hidden="true"></canvas>
-  <!-- 金色光斑跟随 -->
-  <div class="bg-glow-spot" aria-hidden="true"></div>
-  <!-- 桌面端自定义光标 -->
-  <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
 
-  <!-- 加载幕布 + 进度 -->
+  <!-- 加载幕布 -->
   <div id="curtain" aria-hidden="true">
     <div class="curtain-inner">
       <span class="curtain-brand">huinavigate</span>
       <div class="curtain-bar"><i></i></div>
-      <div class="curtain-pct" id="curtainPct">0%</div>
     </div>
   </div>
 
-  <!-- 内容层 -->
+  <!-- 导航(苹果式:logo 居中 + 毛玻璃) -->
+  <header class="nav" id="nav">
+    <nav class="nav-inner">
+      <a class="nav-logo" href="#hero">huinavigate</a>
+      <div class="nav-links">
+        <a href="#about" data-i18n="nav.about">关于</a>
+        <a href="#works" data-i18n="nav.works">作品</a>
+        <a href="#skills" data-i18n="nav.skills">技能</a>
+        <a href="#contact" data-i18n="nav.contact">联系</a>
+      </div>
+      <button class="lang-toggle" id="langToggle" aria-label="切换语言">EN</button>
+    </nav>
+  </header>
+
   <main id="content" class="content">
 
-    <!-- ============ CHAPTER 1 · HERO ============ -->
-    <section class="chapter hero-ch" id="ch1" data-ch="0">
-      <div class="ch-inner center">
-        <p class="ch-eyebrow" data-i18n="hero.eyebrow">你好,世界 👋</p>
-        <h1 class="ch-title">
-          <span class="t-line"><span class="t-word" data-i18n="hero.line1">我 探 索</span></span>
-          <span class="t-line"><span class="t-word grad" data-i18n="hero.line2">我 构 建</span></span>
-          <span class="t-line"><span class="t-word" data-i18n="hero.line3">我 创 造</span></span>
+    <!-- ============ HERO(苹果式大标题) ============ -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <h1 class="hero-title">
+          <span class="h-line">huinavigate</span>
         </h1>
-        <p class="ch-sub" data-i18n="hero.sub">1Charizard · 用代码把想象变成现实</p>
-        <div class="ch-cta">
-          <a class="btn btn-primary" href="#ch2" data-i18n="hero.cta">开始探索</a>
+        <p class="hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
+        <div class="hero-links">
+          <a class="link-arrow" href="#about" data-i18n="hero.learn">了解更多 <span class="arrow">›</span></a>
+          <a class="btn btn-primary" href="#contact" data-i18n="hero.cta">开始探索</a>
         </div>
       </div>
-      <div class="scroll-hint" aria-hidden="true"><span></span></div>
+      <div class="hero-scroll" aria-hidden="true"><span></span></div>
     </section>
 
-    <!-- ============ CHAPTER 2 · EXPLORE ============ -->
-    <section class="chapter ch2" id="ch2" data-ch="1">
-      <div class="ch-inner left">
-        <p class="ch-tag" data-i18n="ch2.tag">01 · 探索</p>
-        <h2 class="ch-heading" data-i18n="ch2.title">好奇心驱动的旅程</h2>
-        <p class="ch-desc" data-i18n="ch2.desc">对新技术永远保持好奇,喜欢拆解复杂问题,从零开始理解事物的运作方式。</p>
+    <!-- ============ ABOUT(浅灰底) ============ -->
+    <section class="section about" id="about">
+      <div class="section-inner">
+        <p class="section-eyebrow" data-i18n="about.eyebrow">关于我</p>
+        <h2 class="section-title" data-i18n="about.title">把好奇心,变成作品。</h2>
+        <p class="section-sub" data-i18n="about.sub">我是一名创造者,相信设计与工程结合,能把想法打磨成可用的作品。</p>
+        <a class="link-arrow" href="#works" data-i18n="about.learn">了解更多 <span class="arrow">›</span></a>
       </div>
     </section>
 
-    <!-- ============ CHAPTER 3 · WORKS ============ -->
-    <section class="chapter ch3" id="ch3" data-ch="2">
-      <div class="ch-inner right">
-        <p class="ch-tag" data-i18n="ch3.tag">02 · 作品</p>
-        <h2 class="ch-heading" data-i18n="ch3.title">正在创造的东西</h2>
-        <p class="ch-desc" data-i18n="ch3.desc">每一个项目都是一次探索 —— 设计与工程的边界,代码与艺术的交汇。</p>
+    <!-- ============ WORKS(白底) ============ -->
+    <section class="section works" id="works">
+      <div class="section-inner">
+        <p class="section-eyebrow" data-i18n="works.eyebrow">作品</p>
+        <h2 class="section-title" data-i18n="works.title">正在创造的东西。</h2>
+        <div class="cards">
+          <a class="card" href="#" >
+            <div class="card-visual v1" aria-hidden="true">🌐</div>
+            <div class="card-body">
+              <h3 data-i18n="works.c1t">huinavigate</h3>
+              <p data-i18n="works.c1d">个人主页 —— 探索设计与交互的边界。</p>
+              <span class="card-link" data-i18n="works.c1l">了解更多 <span class="arrow">›</span></span>
+            </div>
+          </a>
+          <a class="card" href="#">
+            <div class="card-visual v2" aria-hidden="true">🔮</div>
+            <div class="card-body">
+              <h3 data-i18n="works.c2t">下一个项目</h3>
+              <p data-i18n="works.c2d">正在酝酿中 —— 敬请期待。</p>
+              <span class="card-link" data-i18n="works.c2l">了解更多 <span class="arrow">›</span></span>
+            </div>
+          </a>
+        </div>
       </div>
     </section>
 
-    <!-- ============ CHAPTER 4 · SKILLS ============ -->
-    <section class="chapter ch4" id="ch4" data-ch="3">
-      <div class="ch-inner left">
-        <p class="ch-tag" data-i18n="ch4.tag">03 · 技能</p>
-        <h2 class="ch-heading" data-i18n="ch4.title">我的工具箱</h2>
-        <div class="skill-chips">
+    <!-- ============ SKILLS(浅灰底) ============ -->
+    <section class="section skills" id="skills">
+      <div class="section-inner">
+        <p class="section-eyebrow" data-i18n="skills.eyebrow">技能</p>
+        <h2 class="section-title" data-i18n="skills.title">我的工具箱。</h2>
+        <div class="chips">
           <span class="chip" data-i18n="skills.s1">前端开发</span>
           <span class="chip" data-i18n="skills.s2">UI/UX 设计</span>
           <span class="chip" data-i18n="skills.s3">Node.js</span>
@@ -80,48 +102,50 @@
       </div>
     </section>
 
-    <!-- ============ CHAPTER 5 · CONTACT ============ -->
-    <section class="chapter ch5" id="ch5" data-ch="4">
-      <div class="ch-inner center">
-        <p class="ch-tag" data-i18n="ch5.tag">04 · 联系</p>
-        <h2 class="ch-heading" data-i18n="ch5.title">一起创造点什么?</h2>
-        <p class="ch-desc" data-i18n="ch5.desc">无论是合作、交流还是闲聊,欢迎随时找我。</p>
-        <div class="ch-cta">
+    <!-- ============ CONTACT(粉嫩渐变底) ============ -->
+    <section class="section contact" id="contact">
+      <div class="section-inner">
+        <p class="section-eyebrow" data-i18n="contact.eyebrow">联系</p>
+        <h2 class="section-title" data-i18n="contact.title">一起创造点什么?</h2>
+        <p class="section-sub" data-i18n="contact.sub">无论是合作、交流还是闲聊,欢迎随时找我。</p>
+        <div class="contact-links">
           <a class="btn btn-primary" href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a>
-          <a class="btn btn-ghost" href="mailto:1Charizard@users.noreply.github.com" data-i18n="ch5.email">发邮件</a>
+          <a class="btn btn-ghost" href="mailto:1Charizard@users.noreply.github.com" data-i18n="contact.email">发邮件</a>
         </div>
       </div>
     </section>
 
-    <!-- 导航(吸顶) -->
-    <header class="nav" id="nav">
-      <nav class="nav-inner">
-        <a class="nav-logo" href="#ch1">huinavigate</a>
-        <div class="nav-links">
-          <a href="#ch1" data-i18n="nav.home">首页</a>
-          <a href="#ch2" data-i18n="nav.explore">探索</a>
-          <a href="#ch3" data-i18n="nav.works">作品</a>
-          <a href="#ch4" data-i18n="nav.skills">技能</a>
-          <a href="#ch5" data-i18n="nav.contact">联系</a>
-        </div>
-        <div class="nav-right">
-          <button class="lang-toggle" id="langToggle" aria-label="切换语言">EN</button>
-        </div>
-      </nav>
-    </header>
-
+    <!-- ============ FOOTER(苹果式极简) ============ -->
     <footer class="footer">
-      <p>© <span id="year"></span> huinavigate · 1Charizard</p>
-      <p><a href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a></p>
+      <div class="footer-inner">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 data-i18n="footer.nav">导航</h4>
+            <a href="#about" data-i18n="nav.about">关于</a>
+            <a href="#works" data-i18n="nav.works">作品</a>
+            <a href="#skills" data-i18n="nav.skills">技能</a>
+            <a href="#contact" data-i18n="nav.contact">联系</a>
+          </div>
+          <div class="footer-col">
+            <h4 data-i18n="footer.links">链接</h4>
+            <a href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a>
+            <a href="mailto:1Charizard@users.noreply.github.com" data-i18n="footer.email">邮箱</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> huinavigate · 1Charizard</p>
+          <p><a href="#hero">↑ 回到顶部</a></p>
+        </div>
+      </div>
     </footer>
   </main>
 
-  <!-- GSAP (UMD: attaches to window) — plain scripts -->
+  <!-- GSAP(仅用于渐变背景,UMD) -->
   <script src="vendor/gsap.js"></script>
   <script src="vendor/ScrollTrigger.js"></script>
-  <!-- 3D 场景 + 背景渐变 (ESM, three via relative path) -->
-  <script type="module" src="scene.js"></script>
-  <!-- 界面逻辑 (plain script: loading / i18n / nav / cursor / ripple) -->
+  <!-- 背景渐变(plain script) -->
+  <script src="scene.js"></script>
+  <!-- 界面逻辑(i18n / 加载 / 滚动渐入) -->
   <script src="main.js"></script>
 </body>
 </html>

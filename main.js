@@ -1,39 +1,21 @@
 /* ============================================================
    huinavigate — UI logic
-   loading progress / i18n / nav / custom cursor / button ripples
+   loading / i18n / nav / scroll reveal (Apple-style)
    ============================================================ */
 (() => {
   'use strict';
 
-  /* ---------- 3D scene readiness (graceful fallback) ---------- */
-  (function checkScene() {
-    if (window.__sceneReady) return;
-    setTimeout(() => {
-      if (!window.__sceneReady) {
-        document.body.classList.add('no-scene');
-        console.warn('[ui] scene not ready — using CSS fallback.');
-      }
-    }, 3000);
-  })();
-
-  /* ---------- Loading curtain with progress ---------- */
+  /* ---------- Loading curtain ---------- */
   const curtain = document.getElementById('curtain');
-  const pctEl = document.getElementById('curtainPct');
   const content = document.getElementById('content');
 
-  let pct = 0;
-  const timer = setInterval(() => {
-    pct = Math.min(pct + Math.random() * 18 + 10, 100);
-    pctEl.textContent = Math.round(pct) + '%';
-    if (pct >= 100) {
-      clearInterval(timer);
-      setTimeout(() => {
-        curtain.classList.add('done');
-        content.classList.add('entered');
-        document.body.classList.add('ready');
-      }, 350);
-    }
-  }, 100);
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      curtain.classList.add('done');
+      content.classList.add('entered');
+      document.body.classList.add('ready');
+    }, 600);
+  });
 
   /* ---------- Nav scrolled state ---------- */
   const nav = document.getElementById('nav');
@@ -41,85 +23,57 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /* ---------- Custom cursor (desktop only) ---------- */
-  const cursor = document.getElementById('cursor');
-  const fine = window.matchMedia('(pointer: fine)').matches;
-  if (cursor && fine && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.body.classList.add('has-cursor');
-    let cx = -100, cy = -100, mx = -100, my = -100;
-    window.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-    }, { passive: true });
-    (function loop() {
-      cx += (mx - cx) * 0.18;
-      cy += (my - cy) * 0.18;
-      cursor.style.transform = `translate3d(${cx - 22}px, ${cy - 22}px, 0)`;
-      requestAnimationFrame(loop);
-    })();
-
-    // 悬停可交互元素 → 放大
-    const hoverTargets = 'a, button, .chip, .lang-toggle';
-    document.addEventListener('mouseover', e => {
-      if (e.target.closest(hoverTargets)) cursor.classList.add('cursor-hover');
-    });
-    document.addEventListener('mouseout', e => {
-      if (e.target.closest(hoverTargets)) cursor.classList.remove('cursor-hover');
-    });
-    // 点击反馈
-    document.addEventListener('mousedown', () => cursor.classList.add('cursor-down'));
-    document.addEventListener('mouseup', () => cursor.classList.remove('cursor-down'));
-  } else if (cursor) {
-    cursor.style.display = 'none';
+  /* ---------- Scroll reveal (fade-up + scale) ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('visible'));
   }
-
-  /* ---------- Button ripple 波纹 ---------- */
-  document.addEventListener('click', e => {
-    const el = e.target.closest('.btn, .chip, .lang-toggle');
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const span = document.createElement('span');
-    span.className = 'ripple';
-    const size = Math.max(r.width, r.height) * 2.2;
-    span.style.width = span.style.height = size + 'px';
-    span.style.left = (e.clientX - r.left - size / 2) + 'px';
-    span.style.top = (e.clientY - r.top - size / 2) + 'px';
-    el.appendChild(span);
-    setTimeout(() => span.remove(), 650);
-  });
 
   /* ---------- i18n (zh / en) ---------- */
   const I18N = {
     zh: {
-      'nav.home': '首页', 'nav.explore': '探索', 'nav.works': '作品', 'nav.skills': '技能', 'nav.contact': '联系',
-      'hero.eyebrow': '你好,世界 👋',
-      'hero.line1': '我 探 索', 'hero.line2': '我 构 建', 'hero.line3': '我 创 造',
-      'hero.sub': '1Charizard · 用代码把想象变成现实',
-      'hero.cta': '开始探索',
-      'ch2.tag': '01 · 探索', 'ch2.title': '好奇心驱动的旅程',
-      'ch2.desc': '对新技术永远保持好奇,喜欢拆解复杂问题,从零开始理解事物的运作方式。',
-      'ch3.tag': '02 · 作品', 'ch3.title': '正在创造的东西',
-      'ch3.desc': '每一个项目都是一次探索 —— 设计与工程的边界,代码与艺术的交汇。',
-      'ch4.tag': '03 · 技能', 'ch4.title': '我的工具箱',
+      'nav.about': '关于', 'nav.works': '作品', 'nav.skills': '技能', 'nav.contact': '联系',
+      'hero.sub': '探索、构建、创造。',
+      'hero.learn': '了解更多', 'hero.cta': '开始探索',
+      'about.eyebrow': '关于我', 'about.title': '把好奇心,变成作品。',
+      'about.sub': '我是一名创造者,相信设计与工程结合,能把想法打磨成可用的作品。',
+      'about.learn': '了解更多',
+      'works.eyebrow': '作品', 'works.title': '正在创造的东西。',
+      'works.c1t': 'huinavigate', 'works.c1d': '个人主页 —— 探索设计与交互的边界。', 'works.c1l': '了解更多',
+      'works.c2t': '下一个项目', 'works.c2d': '正在酝酿中 —— 敬请期待。', 'works.c2l': '了解更多',
+      'skills.eyebrow': '技能', 'skills.title': '我的工具箱。',
       'skills.s1': '前端开发', 'skills.s2': 'UI/UX 设计', 'skills.s3': 'Node.js', 'skills.s4': '创意编程',
-      'ch5.tag': '04 · 联系', 'ch5.title': '一起创造点什么?',
-      'ch5.desc': '无论是合作、交流还是闲聊,欢迎随时找我。',
-      'ch5.email': '发邮件',
+      'contact.eyebrow': '联系', 'contact.title': '一起创造点什么?',
+      'contact.sub': '无论是合作、交流还是闲聊,欢迎随时找我。',
+      'contact.email': '发邮件',
+      'footer.nav': '导航', 'footer.links': '链接', 'footer.email': '邮箱',
     },
     en: {
-      'nav.home': 'Home', 'nav.explore': 'Explore', 'nav.works': 'Works', 'nav.skills': 'Skills', 'nav.contact': 'Contact',
-      'hero.eyebrow': 'Hello, World 👋',
-      'hero.line1': 'I Explore', 'hero.line2': 'I Build', 'hero.line3': 'I Create',
-      'hero.sub': '1Charizard · Turning imagination into reality with code',
-      'hero.cta': 'Start Exploring',
-      'ch2.tag': '01 · Explore', 'ch2.title': 'A journey driven by curiosity',
-      'ch2.desc': 'Always curious about new tech, deconstructing complex problems to understand how things work from the ground up.',
-      'ch3.tag': '02 · Works', 'ch3.title': 'Things I\'m building',
-      'ch3.desc': 'Every project is an exploration — where design meets engineering, and code meets art.',
-      'ch4.tag': '03 · Skills', 'ch4.title': 'My toolbox',
+      'nav.about': 'About', 'nav.works': 'Works', 'nav.skills': 'Skills', 'nav.contact': 'Contact',
+      'hero.sub': 'Explore. Build. Create.',
+      'hero.learn': 'Learn more', 'hero.cta': 'Start Exploring',
+      'about.eyebrow': 'About', 'about.title': 'Turn curiosity into creations.',
+      'about.sub': 'I\'m a creator who believes design and engineering together can polish ideas into working products.',
+      'about.learn': 'Learn more',
+      'works.eyebrow': 'Works', 'works.title': 'Things I\'m building.',
+      'works.c1t': 'huinavigate', 'works.c1d': 'Personal homepage — exploring the edge of design and interaction.', 'works.c1l': 'Learn more',
+      'works.c2t': 'Next Project', 'works.c2d': 'Brewing — stay tuned.', 'works.c2l': 'Learn more',
+      'skills.eyebrow': 'Skills', 'skills.title': 'My toolbox.',
       'skills.s1': 'Frontend', 'skills.s2': 'UI/UX Design', 'skills.s3': 'Node.js', 'skills.s4': 'Creative Coding',
-      'ch5.tag': '04 · Contact', 'ch5.title': 'Let\'s build something together?',
-      'ch5.desc': 'Whether it\'s collaboration, ideas, or just a chat — I\'m always open.',
-      'ch5.email': 'Email me',
+      'contact.eyebrow': 'Contact', 'contact.title': 'Let\'s build something together?',
+      'contact.sub': 'Whether it\'s collaboration, ideas, or just a chat — I\'m always open.',
+      'contact.email': 'Email me',
+      'footer.nav': 'Navigation', 'footer.links': 'Links', 'footer.email': 'Email',
     }
   };
 

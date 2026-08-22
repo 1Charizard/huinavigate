@@ -51,7 +51,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    多层 radial-gradient 叠加, JS 滚动驱动变色
    ============================================================ */
 .bg-scene {
-  position: fixed; inset: 0; z-index: -1;
+  position: fixed; inset: 0; z-index: -2;
   background:
     /* 中心粉嫩亮区(主光) */
     radial-gradient(ellipse 55% 48% at 50% 42%,
@@ -82,6 +82,25 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 40%),
     rgba(240, 199, 94, 0.10) 0%, transparent 70%);
   transition: background 0.15s ease;
+}
+
+/* 3D 粒子 canvas(渐变之上,内容之下) */
+#scene-canvas {
+  position: fixed; inset: 0; z-index: -1;
+  width: 100%; height: 100%;
+  display: block;
+  pointer-events: none;
+}
+/* WebGL 不可用时隐藏 canvas */
+body.no-scene #scene-canvas { display: none; }
+
+/* 背景入场:暗 → 亮 光效扩散(配合幕布消失) */
+.bg-scene {
+  animation: scene-in 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+}
+@keyframes scene-in {
+  from { opacity: 0; transform: scale(1.12); filter: brightness(0.4); }
+  to { opacity: 1; transform: scale(1); filter: brightness(1); }
 }
 
 /* ============================================================
@@ -336,4 +355,73 @@ body.ready .nav { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .t-word, .ch-sub, .btn, .scroll-hint, .nav { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   自定义光标(桌面端, JS 启用 has-cursor)
+   ============================================================ */
+body.has-cursor, body.has-cursor * { cursor: none !important; }
+
+.cursor {
+  position: fixed; top: 0; left: 0;
+  width: 44px; height: 44px;
+  z-index: 4000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+body.ready .cursor { opacity: 1; }
+.cursor span {
+  position: absolute; inset: 0;
+  border: 1.6px solid rgba(240, 199, 94, 0.85);
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, background 0.3s ease;
+}
+/* 中心小点 */
+.cursor::after {
+  content: ""; position: absolute;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #f0c75e;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s ease;
+}
+.cursor.cursor-hover span {
+  transform: scale(1.5);
+  border-color: #f0c75e;
+  background: rgba(240, 199, 94, 0.12);
+}
+.cursor.cursor-down span {
+  transform: scale(0.8);
+  background: rgba(240, 199, 94, 0.3);
+}
+
+/* ============================================================
+   按钮波纹(点击)
+   ============================================================ */
+.btn, .chip, .lang-toggle { position: relative; overflow: hidden; }
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240, 199, 94, 0.5) 0%, rgba(240, 199, 94, 0) 70%);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ripple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* 按钮悬停增强(弹性 + 金色光) */
+.btn-primary:hover { animation: btn-pulse 0.5s ease; }
+@keyframes btn-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); }
+  100% { transform: scale(1.04); }
+}
+
+/* 触屏设备禁用自定义光标 */
+@media (pointer: coarse) {
+  .cursor { display: none !important; }
+  body.has-cursor, body.has-cursor * { cursor: auto !important; }
 }

@@ -10,9 +10,14 @@
 </head>
 <body>
 
-  <!-- 全屏渐变背景(水晶感)+ 金色光斑 -->
+  <!-- 全屏渐变背景(水晶感) -->
   <div class="bg-scene" aria-hidden="true"></div>
+  <!-- 3D 粒子层 (three.js, 透明) -->
+  <canvas id="scene-canvas" aria-hidden="true"></canvas>
+  <!-- 金色光斑跟随 -->
   <div class="bg-glow-spot" aria-hidden="true"></div>
+  <!-- 桌面端自定义光标 -->
+  <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
 
   <!-- 加载幕布 + 进度 -->
   <div id="curtain" aria-hidden="true">
@@ -111,12 +116,12 @@
     </footer>
   </main>
 
-  <!-- GSAP (UMD: attaches to window) — plain scripts, no importmap needed -->
+  <!-- GSAP (UMD: attaches to window) — plain scripts -->
   <script src="vendor/gsap.js"></script>
   <script src="vendor/ScrollTrigger.js"></script>
-  <!-- 背景渐变逻辑 (plain script) -->
-  <script src="scene.js"></script>
-  <!-- 界面逻辑 (plain script: loading / i18n / nav — works everywhere) -->
+  <!-- 3D 场景 + 背景渐变 (ESM, three via relative path) -->
+  <script type="module" src="scene.js"></script>
+  <!-- 界面逻辑 (plain script: loading / i18n / nav / cursor / ripple) -->
   <script src="main.js"></script>
 </body>
 </html>

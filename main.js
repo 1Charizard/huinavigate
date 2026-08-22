@@ -1,19 +1,19 @@
 /* ============================================================
-   huinavigate — UI logic (loading progress, i18n, nav)
-   Plain script: runs in every browser even without ESM.
+   huinavigate — UI logic
+   loading progress / i18n / nav / custom cursor / button ripples
    ============================================================ */
 (() => {
   'use strict';
 
   /* ---------- 3D scene readiness (graceful fallback) ---------- */
-  // scene.js is a plain script; if it failed (no GSAP), show static gradient
   (function checkScene() {
     if (window.__sceneReady) return;
-    if (window.__sceneFailed) return;
     setTimeout(() => {
-      // gradient bg works via CSS defaults even without scene.js
-      console.warn('[ui] scene.js not ready — CSS gradient background remains.');
-    }, 2500);
+      if (!window.__sceneReady) {
+        document.body.classList.add('no-scene');
+        console.warn('[ui] scene not ready — using CSS fallback.');
+      }
+    }, 3000);
   })();
 
   /* ---------- Loading curtain with progress ---------- */
@@ -27,7 +27,6 @@
     pctEl.textContent = Math.round(pct) + '%';
     if (pct >= 100) {
       clearInterval(timer);
-      // small delay so the user sees 100%, then lift the curtain
       setTimeout(() => {
         curtain.classList.add('done');
         content.classList.add('entered');
@@ -41,6 +40,52 @@
   const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  /* ---------- Custom cursor (desktop only) ---------- */
+  const cursor = document.getElementById('cursor');
+  const fine = window.matchMedia('(pointer: fine)').matches;
+  if (cursor && fine && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.body.classList.add('has-cursor');
+    let cx = -100, cy = -100, mx = -100, my = -100;
+    window.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+    }, { passive: true });
+    (function loop() {
+      cx += (mx - cx) * 0.18;
+      cy += (my - cy) * 0.18;
+      cursor.style.transform = `translate3d(${cx - 22}px, ${cy - 22}px, 0)`;
+      requestAnimationFrame(loop);
+    })();
+
+    // 悬停可交互元素 → 放大
+    const hoverTargets = 'a, button, .chip, .lang-toggle';
+    document.addEventListener('mouseover', e => {
+      if (e.target.closest(hoverTargets)) cursor.classList.add('cursor-hover');
+    });
+    document.addEventListener('mouseout', e => {
+      if (e.target.closest(hoverTargets)) cursor.classList.remove('cursor-hover');
+    });
+    // 点击反馈
+    document.addEventListener('mousedown', () => cursor.classList.add('cursor-down'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('cursor-down'));
+  } else if (cursor) {
+    cursor.style.display = 'none';
+  }
+
+  /* ---------- Button ripple 波纹 ---------- */
+  document.addEventListener('click', e => {
+    const el = e.target.closest('.btn, .chip, .lang-toggle');
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const span = document.createElement('span');
+    span.className = 'ripple';
+    const size = Math.max(r.width, r.height) * 2.2;
+    span.style.width = span.style.height = size + 'px';
+    span.style.left = (e.clientX - r.left - size / 2) + 'px';
+    span.style.top = (e.clientY - r.top - size / 2) + 'px';
+    el.appendChild(span);
+    setTimeout(() => span.remove(), 650);
+  });
 
   /* ---------- i18n (zh / en) ---------- */
   const I18N = {

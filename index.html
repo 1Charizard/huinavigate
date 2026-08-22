@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>huinavigate — 1Charizard</title>
+  <meta name="description" content="1Charizard 的个人主页 — 探索、构建、创造。">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪂</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- 加载幕布 -->
+  <div id="curtain" aria-hidden="true">
+    <div class="curtain-inner">
+      <span class="curtain-brand">huinavigate</span>
+      <div class="curtain-bar"><i></i></div>
+    </div>
+  </div>
+
+  <!-- 骨架屏 -->
+  <div id="skeleton" class="skeleton" aria-hidden="true">
+    <div class="sk-nav"><div class="sk-line w-40"></div></div>
+    <div class="sk-hero">
+      <div class="sk-line w-70 h-xl"></div>
+      <div class="sk-line w-50 h-lg"></div>
+      <div class="sk-line w-60 h-md"></div>
+      <div class="sk-btn"></div>
+    </div>
+    <div class="sk-section">
+      <div class="sk-line w-30 h-lg"></div>
+      <div class="sk-grid">
+        <div class="sk-card"></div>
+        <div class="sk-card"></div>
+        <div class="sk-card"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 动态背景 -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-aurora" aria-hidden="true"></div>
+
+  <!-- 主站 -->
+  <div id="site" class="site">
+    <!-- 导航 -->
+    <header class="nav" id="nav">
+      <nav class="nav-inner">
+        <a class="nav-logo" href="#hero">huinavigate</a>
+        <div class="nav-links" id="navLinks">
+          <a href="#about" data-i18n="nav.about">关于</a>
+          <a href="#projects" data-i18n="nav.projects">项目</a>
+          <a href="#skills" data-i18n="nav.skills">技能</a>
+          <a href="#contact" data-i18n="nav.contact">联系</a>
+        </div>
+        <div class="nav-right">
+          <button class="lang-toggle" id="langToggle" aria-label="切换语言">EN</button>
+          <button class="nav-burger" id="navBurger" aria-label="菜单"><span></span><span></span></button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <p class="hero-eyebrow reveal-stagger" data-i18n="hero.eyebrow">你好,世界 👋</p>
+        <h1 class="hero-title">
+          <span class="t-line"><span class="t-word" data-i18n="hero.line1">我 探 索</span></span>
+          <span class="t-line"><span class="t-word grad" data-i18n="hero.line2">我 构 建</span></span>
+          <span class="t-line"><span class="t-word" data-i18n="hero.line3">我 创 造</span></span>
+        </h1>
+        <p class="hero-sub reveal-stagger" data-i18n="hero.sub">1Charizard · 用代码把想象变成现实</p>
+        <div class="hero-cta reveal-stagger">
+          <a class="btn btn-primary" href="#projects" data-i18n="hero.cta">查看我的作品</a>
+          <a class="btn btn-ghost" href="#contact" data-i18n="hero.cta2">联系我</a>
+        </div>
+        <div class="hero-scroll" aria-hidden="true"><span></span></div>
+      </div>
+    </section>
+
+    <!-- 关于 -->
+    <section class="section about" id="about">
+      <div class="section-inner">
+        <p class="section-tag reveal" data-i18n="about.tag">关于我</p>
+        <h2 class="section-title reveal" data-i18n="about.title">把好奇心,变成作品。</h2>
+        <div class="about-grid">
+          <div class="about-card reveal">
+            <div class="about-icon">🧭</div>
+            <h3 data-i18n="about.c1t">探索者</h3>
+            <p data-i18n="about.c1d">对新技术永远保持好奇,喜欢拆解复杂问题,从零开始理解事物的运作方式。</p>
+          </div>
+          <div class="about-card reveal">
+            <div class="about-icon">🛠️</div>
+            <h3 data-i18n="about.c2t">构建者</h3>
+            <p data-i18n="about.c2d">相信好的产品源于细节,用设计与工程结合的方式,把想法打磨成可用的作品。</p>
+          </div>
+          <div class="about-card reveal">
+            <div class="about-icon">🚀</div>
+            <h3 data-i18n="about.c3t">创造者</h3>
+            <p data-i18n="about.c3d">不设限,不将就。每次迭代都让作品离「理想」更近一步,持续创造价值。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 项目 -->
+    <section class="section projects dark" id="projects">
+      <div class="section-inner">
+        <p class="section-tag reveal" data-i18n="projects.tag">精选项目</p>
+        <h2 class="section-title reveal" data-i18n="projects.title">正在创造的东西</h2>
+        <div class="projects-grid">
+          <article class="project-card tilt reveal" data-tilt>
+            <div class="pc-thumb">🌐</div>
+            <div class="pc-body">
+              <h3 data-i18n="projects.p1t">huinavigate</h3>
+              <p data-i18n="projects.p1d">个人主页 —— 一个充满动态与视觉冲击的展示空间,探索设计与交互的边界。</p>
+              <div class="pc-tags"><span>HTML</span><span>CSS</span><span>JS</span></div>
+            </div>
+          </article>
+          <article class="project-card tilt reveal" data-tilt>
+            <div class="pc-thumb">🔮</div>
+            <div class="pc-body">
+              <h3 data-i18n="projects.p2t">Coming Soon</h3>
+              <p data-i18n="projects.p2d">下一个项目正在酝酿中 —— 敬请期待。</p>
+              <div class="pc-tags"><span>Soon</span></div>
+            </div>
+          </article>
+          <article class="project-card tilt reveal" data-tilt>
+            <div class="pc-thumb">💡</div>
+            <div class="pc-body">
+              <h3 data-i18n="projects.p3t">灵感仓库</h3>
+              <p data-i18n="projects.p3d">收集日常灵感与实验性代码,让每一个念头都有处安放。</p>
+              <div class="pc-tags"><span>Idea</span><span>Lab</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 技能 -->
+    <section class="section skills" id="skills">
+      <div class="section-inner">
+        <p class="section-tag reveal" data-i18n="skills.tag">技能</p>
+        <h2 class="section-title reveal" data-i18n="skills.title">我的工具箱</h2>
+        <div class="skills-list">
+          <div class="skill reveal">
+            <div class="skill-head"><span data-i18n="skills.s1">前端开发</span><b class="skill-num" data-count="92">0</b><em>%</em></div>
+            <div class="skill-bar"><i data-w="92"></i></div>
+          </div>
+          <div class="skill reveal">
+            <div class="skill-head"><span data-i18n="skills.s2">UI/UX 设计</span><b class="skill-num" data-count="85">0</b><em>%</em></div>
+            <div class="skill-bar"><i data-w="85"></i></div>
+          </div>
+          <div class="skill reveal">
+            <div class="skill-head"><span data-i18n="skills.s3">Node.js</span><b class="skill-num" data-count="78">0</b><em>%</em></div>
+            <div class="skill-bar"><i data-w="78"></i></div>
+          </div>
+          <div class="skill reveal">
+            <div class="skill-head"><span data-i18n="skills.s4">创意编程</span><b class="skill-num" data-count="88">0</b><em>%</em></div>
+            <div class="skill-bar"><i data-w="88"></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 联系 -->
+    <section class="section contact" id="contact">
+      <div class="section-inner">
+        <p class="section-tag reveal" data-i18n="contact.tag">联系</p>
+        <h2 class="section-title reveal" data-i18n="contact.title">一起创造点什么?</h2>
+        <p class="contact-sub reveal" data-i18n="contact.sub">无论是合作、交流还是闲聊,欢迎随时找我。</p>
+        <div class="contact-links reveal">
+          <a class="contact-btn" href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a>
+          <a class="contact-btn" href="mailto:1Charizard@users.noreply.github.com" data-i18n="contact.email">发邮件</a>
+          <a class="contact-btn" href="#" data-i18n="contact.resume">我的简历</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <p>© <span id="year"></span> huinavigate · 1Charizard</p>
+        <p class="footer-links">
+          <a href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a>
+          <a href="#hero">↑ Top</a>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

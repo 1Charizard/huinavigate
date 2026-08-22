@@ -6,15 +6,13 @@
   'use strict';
 
   /* ---------- 3D scene readiness (graceful fallback) ---------- */
-  // If scene.js failed to load (no ESM / WebGL), show a static gradient bg
+  // scene.js is a plain script; if it failed (no GSAP), show static gradient
   (function checkScene() {
     if (window.__sceneReady) return;
-    if (window.__sceneFailed) { document.body.classList.add('no-scene'); return; }
+    if (window.__sceneFailed) return;
     setTimeout(() => {
-      if (!window.__sceneReady) {
-        document.body.classList.add('no-scene');
-        console.warn('[ui] 3D scene not ready — using fallback background.');
-      }
+      // gradient bg works via CSS defaults even without scene.js
+      console.warn('[ui] scene.js not ready — CSS gradient background remains.');
     }, 2500);
   })();
 

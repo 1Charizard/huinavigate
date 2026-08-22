@@ -10,8 +10,9 @@
 </head>
 <body>
 
-  <!-- 3D WebGL canvas (fixed fullscreen, behind content) -->
-  <canvas id="scene-canvas" aria-hidden="true"></canvas>
+  <!-- 全屏渐变背景(水晶感)+ 金色光斑 -->
+  <div class="bg-scene" aria-hidden="true"></div>
+  <div class="bg-glow-spot" aria-hidden="true"></div>
 
   <!-- 加载幕布 + 进度 -->
   <div id="curtain" aria-hidden="true">
@@ -22,7 +23,7 @@
     </div>
   </div>
 
-  <!-- 内容层(叠加在 3D 之上,滚动驱动场景) -->
+  <!-- 内容层 -->
   <main id="content" class="content">
 
     <!-- ============ CHAPTER 1 · HERO ============ -->
@@ -113,8 +114,8 @@
   <!-- GSAP (UMD: attaches to window) — plain scripts, no importmap needed -->
   <script src="vendor/gsap.js"></script>
   <script src="vendor/ScrollTrigger.js"></script>
-  <!-- 3D 场景逻辑 (ESM, imports three via relative path) -->
-  <script type="module" src="scene.js"></script>
+  <!-- 背景渐变逻辑 (plain script) -->
+  <script src="scene.js"></script>
   <!-- 界面逻辑 (plain script: loading / i18n / nav — works everywhere) -->
   <script src="main.js"></script>
 </body>

@@ -25,6 +25,17 @@ body {
   overflow-x: hidden;
 }
 
+/* Fallback background when WebGL/ESM unavailable (no 3D scene) */
+body.no-scene {
+  background:
+    radial-gradient(60% 50% at 20% 10%, rgba(58, 123, 213, 0.28), transparent 70%),
+    radial-gradient(55% 45% at 85% 20%, rgba(142, 45, 226, 0.22), transparent 70%),
+    radial-gradient(70% 55% at 50% 100%, rgba(255, 77, 141, 0.16), transparent 70%),
+    #05060a;
+  background-attachment: fixed;
+}
+body.no-scene #scene-canvas { display: none; }
+
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 ::selection { background: var(--accent); color: #fff; }

@@ -7,15 +7,6 @@
   <meta name="description" content="1Charizard 的沉浸式 3D 个人主页 — 探索、构建、创造。">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪂</text></svg>">
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Module dependencies (local vendor) -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "./vendor/three.module.min.js"
-    }
-  }
-  </script>
 </head>
 <body>
 
@@ -35,7 +26,7 @@
   <main id="content" class="content">
 
     <!-- ============ CHAPTER 1 · HERO ============ -->
-    <section class="chapter hero-ch" data-ch="0">
+    <section class="chapter hero-ch" id="ch1" data-ch="0">
       <div class="ch-inner center">
         <p class="ch-eyebrow" data-i18n="hero.eyebrow">你好,世界 👋</p>
         <h1 class="ch-title">
@@ -52,7 +43,7 @@
     </section>
 
     <!-- ============ CHAPTER 2 · EXPLORE ============ -->
-    <section class="chapter ch2" data-ch="1">
+    <section class="chapter ch2" id="ch2" data-ch="1">
       <div class="ch-inner left">
         <p class="ch-tag" data-i18n="ch2.tag">01 · 探索</p>
         <h2 class="ch-heading" data-i18n="ch2.title">好奇心驱动的旅程</h2>
@@ -61,7 +52,7 @@
     </section>
 
     <!-- ============ CHAPTER 3 · WORKS ============ -->
-    <section class="chapter ch3" data-ch="2">
+    <section class="chapter ch3" id="ch3" data-ch="2">
       <div class="ch-inner right">
         <p class="ch-tag" data-i18n="ch3.tag">02 · 作品</p>
         <h2 class="ch-heading" data-i18n="ch3.title">正在创造的东西</h2>
@@ -70,7 +61,7 @@
     </section>
 
     <!-- ============ CHAPTER 4 · SKILLS ============ -->
-    <section class="chapter ch4" data-ch="3">
+    <section class="chapter ch4" id="ch4" data-ch="3">
       <div class="ch-inner left">
         <p class="ch-tag" data-i18n="ch4.tag">03 · 技能</p>
         <h2 class="ch-heading" data-i18n="ch4.title">我的工具箱</h2>
@@ -84,7 +75,7 @@
     </section>
 
     <!-- ============ CHAPTER 5 · CONTACT ============ -->
-    <section class="chapter ch5" data-ch="4">
+    <section class="chapter ch5" id="ch5" data-ch="4">
       <div class="ch-inner center">
         <p class="ch-tag" data-i18n="ch5.tag">04 · 联系</p>
         <h2 class="ch-heading" data-i18n="ch5.title">一起创造点什么?</h2>
@@ -119,9 +110,12 @@
     </footer>
   </main>
 
-  <!-- 3D 场景逻辑 -->
+  <!-- GSAP (UMD: attaches to window) — plain scripts, no importmap needed -->
+  <script src="vendor/gsap.js"></script>
+  <script src="vendor/ScrollTrigger.js"></script>
+  <!-- 3D 场景逻辑 (ESM, imports three via relative path) -->
   <script type="module" src="scene.js"></script>
-  <!-- 界面逻辑(i18n / 导航 / 加载进度) -->
-  <script type="module" src="main.js"></script>
+  <!-- 界面逻辑 (plain script: loading / i18n / nav — works everywhere) -->
+  <script src="main.js"></script>
 </body>
 </html>

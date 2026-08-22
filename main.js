@@ -1,8 +1,22 @@
 /* ============================================================
    huinavigate — UI logic (loading progress, i18n, nav)
+   Plain script: runs in every browser even without ESM.
    ============================================================ */
 (() => {
   'use strict';
+
+  /* ---------- 3D scene readiness (graceful fallback) ---------- */
+  // If scene.js failed to load (no ESM / WebGL), show a static gradient bg
+  (function checkScene() {
+    if (window.__sceneReady) return;
+    if (window.__sceneFailed) { document.body.classList.add('no-scene'); return; }
+    setTimeout(() => {
+      if (!window.__sceneReady) {
+        document.body.classList.add('no-scene');
+        console.warn('[ui] 3D scene not ready — using fallback background.');
+      }
+    }, 2500);
+  })();
 
   /* ---------- Loading curtain with progress ---------- */
   const curtain = document.getElementById('curtain');

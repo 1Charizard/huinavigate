@@ -2,14 +2,26 @@
    huinavigate — immersive 3D scene (Three.js + GSAP ScrollTrigger)
    Every scroll range morphs the particle field + chapter objects.
    ============================================================ */
-import * as THREE from 'three';
-// GSAP ships UMD only; in a module context it attaches to `window`.
-import './vendor/gsap.js';
-import './vendor/ScrollTrigger.js';
-const { gsap } = window;
-const { ScrollTrigger } = window;
+import * as THREE from './vendor/three.module.min.js';
+// GSAP loaded via plain <script> tags (UMD) -> attached to window
+const { gsap, ScrollTrigger } = window;
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* ----------------------------------------------------------
+   WebGL support check (graceful degradation)
+   ---------------------------------------------------------- */
+const webglOk = (() => {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl'));
+  } catch (e) { return false; }
+})();
+if (!webglOk) {
+  document.body.classList.add('no-scene');
+  window.__sceneFailed = true;
+  console.warn('[scene] WebGL unavailable — running without 3D.');
+}
 
 /* ----------------------------------------------------------
    Config / adaptive quality
@@ -30,9 +42,17 @@ const CHAPTER_COLORS = [                     // per-chapter base colors
    Renderer / Scene / Camera
    ---------------------------------------------------------- */
 const canvas = document.getElementById('scene-canvas');
-const renderer = new THREE.WebGLRenderer({
-  canvas, antialias: !isMobile, alpha: true, powerPreference: 'high-performance',
-});
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({
+    canvas, antialias: !isMobile, alpha: true, powerPreference: 'high-performance',
+  });
+} catch (e) {
+  console.warn('[scene] WebGLRenderer failed:', e);
+  document.body.classList.add('no-scene');
+  window.__sceneFailed = true;
+  throw e;
+}
 renderer.setPixelRatio(DPR);
 renderer.setSize(window.innerWidth, window.innerHeight);
 

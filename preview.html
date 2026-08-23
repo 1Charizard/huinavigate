@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>huinavigate · 组件预览</title>
+  <meta name="description" content="huinavigate 组件库交互效果预览 — 像素切换/弹性 Dock/解密文字/曲线跑马灯等。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f0c75e'/%3E%3Cstop offset='1' stop-color='%23e0b8c8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='-apple-system,Segoe UI,sans-serif' font-size='34' font-weight='700' text-anchor='middle' fill='%231d1d1f'%3Eh%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="preview.css">
+</head>
+<body>
+
+  <header class="pv-hero">
+    <a class="pv-back" href="./">← 返回主页</a>
+    <h1 class="pv-title">huinavigate <em>组件预览</em></h1>
+    <p class="pv-sub">14 个交互效果 · 纯静态移植 · 手机 / 电脑均可体验</p>
+  </header>
+
+  <main class="pv-grid">
+
+    <!-- 1 Gradient Text -->
+    <article class="demo-card" id="demo-gradient-text">
+      <header class="demo-head"><h2>Gradient Text</h2><span class="demo-tag">CSS</span></header>
+      <div class="demo-stage demo-center">
+        <div class="gradient-text">huinavigate</div>
+      </div>
+      <p class="demo-desc">流动渐变文字：背景循环移动，悬停暂停。</p>
+    </article>
+
+    <!-- 2 Click Spark -->
+    <article class="demo-card" id="demo-click-spark">
+      <header class="demo-head"><h2>Click Spark</h2><span class="demo-tag">Canvas</span></header>
+      <div class="demo-stage spark-stage"><span class="spark-tip">点我！</span></div>
+      <p class="demo-desc">点击任意位置，放射金色火花。</p>
+    </article>
+
+    <!-- 3 Blur Text -->
+    <article class="demo-card" id="demo-blur-text">
+      <header class="demo-head"><h2>Blur Text</h2><span class="demo-tag">IO</span></header>
+      <div class="demo-stage demo-center">
+        <p class="blur-text" data-blur-text>把好奇心 变成作品</p>
+      </div>
+      <p class="demo-desc">进入视口时逐词模糊→清晰入场。</p>
+    </article>
+
+    <!-- 4 Decrypted Text -->
+    <article class="demo-card" id="demo-decrypted">
+      <header class="demo-head"><h2>Decrypted Text</h2><span class="demo-tag">JS</span></header>
+      <div class="demo-stage demo-center">
+        <p class="decrypted" data-decrypted="huinavigate">huinavigate</p>
+        <p class="demo-note">悬停/点击解密</p>
+      </div>
+      <p class="demo-desc">乱码逐个还原，支持 hover / click 触发。</p>
+    </article>
+
+    <!-- 5 Curved Loop -->
+    <article class="demo-card" id="demo-curved">
+      <header class="demo-head"><h2>Curved Loop</h2><span class="demo-tag">SVG</span></header>
+      <div class="demo-stage curved-stage" id="curvedStage"></div>
+      <p class="demo-desc">沿曲线循环跑马灯，可拖拽改变方向与速度。</p>
+    </article>
+
+    <!-- 6 Dock -->
+    <article class="demo-card" id="demo-dock">
+      <header class="demo-head"><h2>Dock</h2><span class="demo-tag">rAF</span></header>
+      <div class="demo-stage dock-stage">
+        <div class="dock-panel" id="dockPanel">
+          <div class="dock-item" data-label="主页"><span class="dock-icon">🏠</span></div>
+          <div class="dock-item" data-label="作品"><span class="dock-icon">💼</span></div>
+          <div class="dock-item" data-label="GitHub"><span class="dock-icon">🐙</span></div>
+          <div class="dock-item" data-label="邮箱"><span class="dock-icon">✉️</span></div>
+          <div class="dock-item" data-label="设置"><span class="dock-icon">⚙️</span></div>
+        </div>
+      </div>
+      <p class="demo-desc">苹果式弹性 Dock：鼠标靠近图标放大。</p>
+    </article>
+
+    <!-- 7 Border Glow -->
+    <article class="demo-card" id="demo-border-glow">
+      <header class="demo-head"><h2>Border Glow</h2><span class="demo-tag">CSS</span></header>
+      <div class="demo-stage demo-center">
+        <div class="border-glow-card" data-glow>
+          <span class="edge-light"></span>
+          <div class="border-glow-inner">
+            <strong>水晶卡片</strong>
+            <small>指针靠近边缘亮起金色锥形描边光</small>
+          </div>
+        </div>
+      </div>
+      <p class="demo-desc">conic mask 锥形辉光 + 7 层 mesh 渐变描边。</p>
+    </article>
+
+    <!-- 8 Line Sidebar -->
+    <article class="demo-card" id="demo-sidebar">
+      <header class="demo-head"><h2>Line Sidebar</h2><span class="demo-tag">rAF</span></header>
+      <div class="demo-stage demo-center">
+        <nav class="line-sidebar" data-sidebar>
+          <ul class="line-sidebar__list">
+            <li class="line-sidebar__item"><span class="line-sidebar__marker"></span><span class="line-sidebar__label"><span class="line-sidebar__index">01</span><span class="line-sidebar__text">Overview</span></span></li>
+            <li class="line-sidebar__item"><span class="line-sidebar__marker"></span><span class="line-sidebar__label"><span class="line-sidebar__index">02</span><span class="line-sidebar__text">Components</span></span></li>
+            <li class="line-sidebar__item"><span class="line-sidebar__marker"></span><span class="line-sidebar__label"><span class="line-sidebar__index">03</span><span class="line-sidebar__text">Animations</span></span></li>
+            <li class="line-sidebar__item"><span class="line-sidebar__marker"></span><span class="line-sidebar__label"><span class="line-sidebar__index">04</span><span class="line-sidebar__text">Showcase</span></span></li>
+            <li class="line-sidebar__item"><span class="line-sidebar__marker"></span><span class="line-sidebar__label"><span class="line-sidebar__index">05</span><span class="line-sidebar__text">Playground</span></span></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="demo-desc">指针经过时条目位移 / 变色 / 刻度生长（指数平滑）。</p>
+    </article>
+
+    <!-- 9 Scroll Expand -->
+    <article class="demo-card" id="demo-scroll-expand">
+      <header class="demo-head"><h2>Scroll Expand</h2><span class="demo-tag">Sticky</span></header>
+      <div class="demo-stage demo-scroll-expand">
+        <div class="scroll-expand" data-scroll-expand>
+          <div class="scroll-expand__track">
+            <div class="scroll-expand__stage">
+              <div class="scroll-expand__frame">
+                <div class="scroll-expand__media" data-media></div>
+                <div class="scroll-expand__scrim"></div>
+              </div>
+              <div class="scroll-expand__title">huinavigate</div>
+              <div class="scroll-expand__hint">↓ 向下滚动展开</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="demo-desc">滚动时画面从窗口展开为全屏（此卡片内滚动）。</p>
+    </article>
+
+    <!-- 10 Card Swap -->
+    <article class="demo-card" id="demo-card-swap">
+      <header class="demo-head"><h2>Card Swap</h2><span class="demo-tag">GSAP</span></header>
+      <div class="demo-stage demo-center">
+        <div class="card-swap" id="cardSwap" data-cards>
+          <div class="swap-card" style="background:linear-gradient(135deg,#f3d9d3,#e0b8c8)"><span>01</span></div>
+          <div class="swap-card" style="background:linear-gradient(135deg,#f0c75e,#d4a017)"><span>02</span></div>
+          <div class="swap-card" style="background:linear-gradient(135deg,#e6d4ef,#cbaee0)"><span>03</span></div>
+        </div>
+      </div>
+      <p class="demo-desc">弹性落牌轮换：卡片堆叠，周期轮换。</p>
+    </article>
+
+    <!-- 11 Pixel Swap -->
+    <article class="demo-card" id="demo-pixel-swap">
+      <header class="demo-head"><h2>Pixel Swap</h2><span class="demo-tag">WAAPI</span></header>
+      <div class="demo-stage">
+        <div class="pixel-swap-demo" id="pixelSwapDemo">
+          <div class="ps-layer" data-visible="true"><div class="ps-face ps-face-a"><b>huinavigate</b></div></div>
+          <div class="ps-layer" data-visible="false" aria-hidden="true"><div class="ps-face ps-face-b"><b>探索 · 构建 · 创造</b></div></div>
+        </div>
+        <div class="pv-controls">
+          <button class="pv-btn" data-ps-pattern="center">center</button>
+          <button class="pv-btn" data-ps-pattern="spiral">spiral</button>
+          <button class="pv-btn" data-ps-pattern="edges">edges</button>
+          <button class="pv-btn" data-ps-pattern="diagonal">diagonal</button>
+        </div>
+      </div>
+      <p class="demo-desc">点击按钮，以不同图案像素切换两面。</p>
+    </article>
+
+    <!-- 12 Elastic Slider -->
+    <article class="demo-card" id="demo-slider">
+      <header class="demo-head"><h2>Elastic Slider</h2><span class="demo-tag">Pointer</span></header>
+      <div class="demo-stage demo-center">
+        <div class="elastic-slider" data-slider>
+          <span class="es-icon es-l">−</span>
+          <div class="es-root">
+            <div class="es-track"><div class="es-range"></div></div>
+          </div>
+          <span class="es-icon es-r">+</span>
+          <span class="es-value">50</span>
+        </div>
+      </div>
+      <p class="demo-desc">拖出边界时轨道拉伸、图标挤压，松手弹簧回弹。</p>
+    </article>
+
+    <!-- 13 Antigravity (2D) -->
+    <article class="demo-card" id="demo-antigravity">
+      <header class="demo-head"><h2>Antigravity</h2><span class="demo-tag">Canvas</span></header>
+      <div class="demo-stage antigravity-stage" id="antigravityStage">
+        <span class="ag-tip">移动鼠标形成粒子环</span>
+      </div>
+      <p class="demo-desc">2D 简化版：粒子被鼠标吸引环绕成环，带波动机理。</p>
+    </article>
+
+    <!-- 14 Specular Button -->
+    <article class="demo-card" id="demo-specular">
+      <header class="demo-head"><h2>Specular Button</h2><span class="demo-tag">CSS</span></header>
+      <div class="demo-stage demo-center">
+        <button class="specular-btn" data-specular>Get Started <span class="specular-shine"></span></button>
+      </div>
+      <p class="demo-desc">CSS 简化版高光按钮：光带随指针旋转扫过（WebGL 版需 ogl 库）。</p>
+    </article>
+
+  </main>
+
+  <footer class="pv-footer">
+    <p>huinavigate · 组件预览 · <a href="./">返回主页</a></p>
+  </footer>
+
+  <script src="vendor/gsap.js"></script>
+  <script src="pixel-swap.js"></script>
+  <script src="preview.js"></script>
+</body>
+</html>

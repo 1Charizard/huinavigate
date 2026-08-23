@@ -1,0 +1,459 @@
+/* ============================================================
+   huinavigate — 组件预览页(粉金风格)
+   ============================================================ */
+
+/* ---------- SF Pro 字体 ---------- */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("vendor/fonts/SF-Pro-Display-Regular.otf") format("opentype");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("vendor/fonts/SF-Pro-Display-Bold.otf") format("opentype");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("vendor/fonts/SF-Pro-Display-Heavy.otf") format("opentype");
+  font-weight: 800; font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro Text";
+  src: url("vendor/fonts/SF-Pro-Text-Regular.otf") format("opentype");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "SF Pro Text";
+  src: url("vendor/fonts/SF-Pro-Text-Medium.otf") format("opentype");
+  font-weight: 500; font-display: swap;
+}
+
+:root {
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --font-text: "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --ink: #1d1d1f;
+  --ink-soft: #4a4a4d;
+  --ink-faint: #6e6e73;
+  --gold: #d4a017;
+  --gold-deep: #8a6408;
+  --gold-light: #f0c75e;
+  --pink: #f3d9d3;
+  --rose: #e0b8c8;
+  --bg: #fdf3f5;
+  --card: rgba(255, 255, 255, 0.8);
+  --stroke: rgba(255, 255, 255, 0.65);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-text);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* ---------- 页头 ---------- */
+.pv-hero {
+  max-width: 1180px; margin: 0 auto; padding: 56px 24px 20px; text-align: center;
+}
+.pv-back {
+  display: inline-block; margin-bottom: 22px;
+  font-size: 13px; font-weight: 600; color: var(--gold-deep);
+  border: 1.5px solid rgba(212, 160, 23, 0.5);
+  padding: 6px 16px; border-radius: 980px; background: rgba(255,255,255,0.5);
+  transition: background 0.25s ease, color 0.25s ease;
+  text-decoration: none;
+}
+.pv-back:hover { background: var(--gold); color: #fff; }
+.pv-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 64px); font-weight: 800; letter-spacing: -0.03em;
+}
+.pv-title em {
+  font-style: normal;
+  background: linear-gradient(120deg, var(--gold) 0%, var(--rose) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.pv-sub { margin-top: 10px; color: var(--ink-soft); font-size: 15px; }
+
+/* ---------- 卡片网格 ---------- */
+.pv-grid {
+  max-width: 1180px; margin: 0 auto; padding: 28px 24px 60px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px;
+}
+.demo-card {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 24px; overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 40px rgba(0,0,0,0.06);
+  display: flex; flex-direction: column;
+  backdrop-filter: blur(10px);
+}
+.demo-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 0;
+}
+.demo-head h2 { font-family: var(--font-display); font-size: 19px; font-weight: 700; }
+.demo-tag {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gold-deep); background: rgba(240,199,94,0.25);
+  padding: 3px 10px; border-radius: 980px;
+}
+.demo-stage {
+  margin: 16px 20px 0; border-radius: 16px;
+  background: linear-gradient(160deg, #fff 0%, #fdf0f3 100%);
+  border: 1px solid rgba(0,0,0,0.05);
+  min-height: 200px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.demo-center { flex-direction: column; }
+.demo-desc {
+  padding: 12px 20px 16px; font-size: 13px; color: var(--ink-faint);
+}
+.demo-note { font-size: 12px; color: var(--ink-faint); margin-top: 8px; }
+
+/* ============================================================
+   1. Gradient Text
+   ============================================================ */
+.gradient-text {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5vw, 54px); font-weight: 800; letter-spacing: -0.02em;
+  background-image: linear-gradient(90deg, #d4a017, #e0b8c8, #f0c75e, #f3d9d3, #d4a017);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-flow 5s linear infinite;
+}
+@keyframes gradient-flow { to { background-position: 300% 0; } }
+.gradient-text.paused { animation-play-state: paused; }
+
+/* ============================================================
+   2. Click Spark
+   ============================================================ */
+.spark-stage { cursor: crosshair; }
+.spark-stage canvas { position: absolute; inset: 0; pointer-events: none; }
+.spark-tip { font-size: 15px; font-weight: 600; color: var(--ink-soft); pointer-events: none; }
+
+/* ============================================================
+   3. Blur Text
+   ============================================================ */
+.blur-text {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.5vw, 46px); font-weight: 700; letter-spacing: -0.01em;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35em;
+  line-height: 1.2;
+}
+.blur-text .bt-word {
+  display: inline-block;
+  opacity: 0; filter: blur(10px); transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+    filter 0.7s cubic-bezier(0.16,1,0.3,1),
+    transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.blur-text.in .bt-word { opacity: 1; filter: blur(0); transform: none; }
+
+/* ============================================================
+   4. Decrypted Text
+   ============================================================ */
+.decrypted {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.5vw, 46px); font-weight: 800; letter-spacing: -0.01em;
+  cursor: pointer; user-select: none;
+  font-variant-ligatures: none;
+}
+.decrypted .dc-encrypted { color: var(--gold); }
+.decrypted .dc-ok { color: var(--ink); }
+
+/* ============================================================
+   5. Curved Loop
+   ============================================================ */
+.curved-stage { overflow: hidden; }
+.curved-loop-jacket { width: 100%; cursor: grab; }
+.curved-loop-jacket:active { cursor: grabbing; }
+.curved-loop-svg { width: 100%; height: auto; display: block; }
+.curved-loop-text {
+  font-family: var(--font-display);
+  font-size: 34px; font-weight: 800; letter-spacing: 0.02em;
+  fill: url(#curvedGrad);
+}
+@media (max-width: 720px) { .curved-loop-text { font-size: 24px; } }
+
+/* ============================================================
+   6. Dock
+   ============================================================ */
+.dock-stage { min-height: 220px; align-items: flex-end; }
+.dock-panel {
+  display: flex; align-items: flex-end; gap: 10px;
+  background: rgba(29,29,31,0.92);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px; padding: 8px;
+  margin-bottom: 22px;
+}
+.dock-item {
+  position: relative;
+  width: 46px; height: 46px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold-light), var(--rose));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  transition: transform 0.12s ease-out;
+  will-change: transform;
+}
+.dock-item::after {
+  content: attr(data-label);
+  position: absolute; bottom: calc(100% + 10px); left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(29,29,31,0.92); color: #fff;
+  font-size: 11px; padding: 3px 10px; border-radius: 6px;
+  white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.dock-item:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============================================================
+   7. Border Glow
+   ============================================================ */
+.border-glow-card {
+  --edge-proximity: 0; --cursor-angle: 45deg;
+  --edge-sensitivity: 30; --color-sensitivity: calc(var(--edge-sensitivity) + 20);
+  --border-radius: 20px; --glow-padding: 30px; --cone-spread: 30;
+  position: relative; border-radius: var(--border-radius); isolation: isolate;
+  border: 1px solid rgba(29,29,31,0.08);
+  background: linear-gradient(160deg, #fff, #fdf0f3);
+  padding: 34px 30px; text-align: center;
+  overflow: visible; width: 260px;
+}
+.border-glow-card strong { font-family: var(--font-display); font-size: 20px; display: block; margin-bottom: 6px; }
+.border-glow-card small { color: var(--ink-faint); font-size: 12px; }
+.border-glow-card::before,
+.border-glow-card::after,
+.border-glow-card > .edge-light { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; }
+.border-glow-card::before {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#fff 0 100%) padding-box,
+    radial-gradient(at 70% 40%, #f0c75e 0px, transparent 55%) border-box,
+    radial-gradient(at 30% 70%, #e0b8c8 0px, transparent 55%) border-box,
+    radial-gradient(at 80% 80%, #f3d9d3 0px, transparent 50%) border-box;
+  opacity: calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+  mask-image: conic-gradient(from var(--cursor-angle) at center,
+    black calc(var(--cone-spread) * 1%), transparent calc((var(--cone-spread) + 15) * 1%),
+    transparent calc((100 - var(--cone-spread) - 15) * 1%), black calc((100 - var(--cone-spread)) * 1%));
+}
+.border-glow-card::after {
+  border: 1px solid transparent;
+  background:
+    radial-gradient(at 70% 40%, rgba(240,199,94,0.5) 0px, transparent 55%) padding-box,
+    radial-gradient(at 30% 70%, rgba(224,184,200,0.5) 0px, transparent 55%) padding-box;
+  mask-image: linear-gradient(to bottom, black, black), radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%);
+  mask-composite: subtract;
+  opacity: calc(0.5 * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+  mix-blend-mode: soft-light;
+}
+.border-glow-card > .edge-light {
+  inset: calc(var(--glow-padding) * -1); z-index: 1;
+  mask-image: conic-gradient(from var(--cursor-angle) at center, black 2.5%, transparent 12%, transparent 88%, black 97.5%);
+  opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+  mix-blend-mode: plus-lighter;
+}
+.border-glow-card > .edge-light::before {
+  content: ""; position: absolute; inset: var(--glow-padding); border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(212,160,23,1),
+    inset 0 0 8px 0 rgba(212,160,23,0.55),
+    inset 0 0 20px 2px rgba(240,199,94,0.35),
+    0 0 12px 0 rgba(212,160,23,0.4);
+}
+
+/* ============================================================
+   8. Line Sidebar
+   ============================================================ */
+.line-sidebar { --marker-length: 56px; --marker-gap: 12px; padding-left: calc(var(--marker-length) + var(--marker-gap)); }
+.line-sidebar__list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+.line-sidebar__item { position: relative; cursor: pointer; }
+.line-sidebar__label {
+  display: inline-flex; align-items: baseline; font-size: 15px; font-weight: 500; line-height: 1.2;
+  color: color-mix(in srgb, var(--gold) calc(var(--effect, 0) * 100%), #9a9aa0);
+  transform: translateX(calc(var(--effect, 0) * 22px));
+  transition: color 0.1s linear;
+}
+.line-sidebar__index {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  margin-right: 0.6rem; font-size: 12px;
+  opacity: calc(0.5 + var(--effect, 0) * 0.5);
+  color: var(--ink-faint);
+}
+.line-sidebar__marker {
+  position: absolute; top: 50%; left: calc(-1 * var(--marker-length) - var(--marker-gap));
+  height: 1.5px; width: var(--marker-length);
+  background: color-mix(in srgb, var(--gold) calc(var(--effect, 0) * 100%), #d8d8dc);
+  transform: translateY(-50%) scaleX(calc(0.5 + var(--effect, 0) * 0.5));
+  transform-origin: left center;
+}
+.line-sidebar__item:not(:last-child)::after {
+  content: ""; position: absolute; top: calc(100% + 8px);
+  left: calc(-1 * var(--marker-length) - var(--marker-gap));
+  height: 1px; width: calc(var(--marker-length) * 0.4);
+  background: #d8d8dc; transform: translateY(-50%);
+}
+
+/* ============================================================
+   9. Scroll Expand
+   ============================================================ */
+.demo-scroll-expand { display: block; padding: 0; min-height: 360px; background: #f5f5f7; }
+.scroll-expand { position: relative; height: 360px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.scroll-expand::-webkit-scrollbar { display: none; }
+.scroll-expand__track { position: relative; width: 100%; }
+.scroll-expand__stage {
+  position: sticky; top: 0; height: 360px; width: 100%; overflow: hidden;
+  background: linear-gradient(160deg, #fdf3f5, #f3d9d3 55%, #e0b8c8);
+}
+.scroll-expand__frame {
+  position: absolute; inset: 0;
+  clip-path: inset(42% 29% 42% 29% round 24px);
+  will-change: clip-path;
+}
+.scroll-expand__media {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 30% 40%, #f0c75e 0 12%, transparent 12.5%),
+    radial-gradient(circle at 60% 65%, #f3d9d3 0 18%, transparent 18.5%),
+    radial-gradient(circle at 80% 30%, #e0b8c8 0 10%, transparent 10.5%),
+    linear-gradient(135deg, #fdf3f5, #e0b8c8);
+  transform: scale(1.35);
+  will-change: transform;
+}
+.scroll-expand__scrim { position: absolute; inset: 0; background: rgba(29,29,31,0.45); opacity: 0; }
+.scroll-expand__title {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: clamp(26px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em;
+  color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,0.4);
+  opacity: 1; will-change: opacity, transform; pointer-events: none;
+}
+.scroll-expand__hint {
+  position: absolute; bottom: 14px; left: 0; right: 0; text-align: center;
+  font-size: 12px; color: rgba(255,255,255,0.75); pointer-events: none;
+}
+
+/* ============================================================
+   10. Card Swap
+   ============================================================ */
+.card-swap { position: relative; width: 210px; height: 240px; perspective: 900px; }
+.swap-card {
+  position: absolute; top: 50%; left: 50%;
+  width: 200px; height: 240px; border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.8);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 48px; font-weight: 800; color: #1d1d1f;
+  transform-style: preserve-3d; backface-visibility: hidden;
+  will-change: transform; box-shadow: 0 16px 44px rgba(0,0,0,0.16);
+}
+
+/* ============================================================
+   11. Pixel Swap
+   ============================================================ */
+.pixel-swap-demo {
+  position: relative; width: 100%; aspect-ratio: 16 / 10;
+  border-radius: 14px; overflow: hidden;
+}
+.ps-layer { position: absolute; inset: 0; transition: opacity 0.3s ease; }
+.ps-layer[data-visible="false"] { opacity: 0; visibility: hidden; pointer-events: none; }
+.ps-grid { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+.ps-pixel { position: absolute; overflow: hidden; will-change: transform; }
+.ps-pixel-content { position: absolute; }
+.ps-face {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em;
+  font-size: clamp(22px, 3.4vw, 40px);
+}
+.ps-face-a { background: linear-gradient(160deg, #f0c75e, #d4a017); color: #fff; }
+.ps-face-b { background: linear-gradient(160deg, #f3d9d3, #e0b8c8); color: #1d1d1f; }
+.pv-controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+.pv-btn {
+  font-size: 12px; font-weight: 600; color: var(--gold-deep);
+  border: 1.5px solid rgba(212,160,23,0.5); background: rgba(255,255,255,0.6);
+  padding: 5px 14px; border-radius: 980px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.pv-btn:hover { background: var(--gold); color: #fff; }
+
+/* ============================================================
+   12. Elastic Slider
+   ============================================================ */
+.elastic-slider {
+  display: flex; align-items: center; gap: 14px; width: 260px;
+  touch-action: none; user-select: none;
+}
+.es-icon {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(240,199,94,0.35); color: var(--gold-deep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; will-change: transform;
+}
+.es-root { flex: 1; padding: 12px 0; cursor: grab; touch-action: none; }
+.es-track {
+  position: relative; height: 8px; border-radius: 999px;
+  background: rgba(29,29,31,0.12); overflow: hidden;
+}
+.es-range {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--gold-light), var(--gold));
+  border-radius: 999px;
+}
+.es-value { font-size: 13px; font-weight: 600; color: var(--ink-faint); min-width: 26px; text-align: right; }
+
+/* ============================================================
+   13. Antigravity (2D)
+   ============================================================ */
+.antigravity-stage { background: linear-gradient(160deg, #1a1a24, #2a1a22 60%, #3a2430); min-height: 220px; }
+.antigravity-stage canvas { position: absolute; inset: 0; }
+.ag-tip { font-size: 13px; color: rgba(255,255,255,0.65); pointer-events: none; z-index: 1; }
+
+/* ============================================================
+   14. Specular Button (CSS)
+   ============================================================ */
+.specular-btn {
+  position: relative; overflow: hidden;
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: 0.01em;
+  color: #fff; background: #3a3a3e;
+  border-radius: 16px; padding: 16px 44px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease;
+}
+.specular-btn:active { transform: scale(0.97); }
+.specular-btn::before {
+  content: ""; position: absolute; inset: -40%;
+  background: conic-gradient(from var(--sb-angle, 0deg) at 50% 50%,
+    transparent 0deg, rgba(255,255,255,0.9) 12deg, transparent 26deg);
+  mix-blend-mode: overlay;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.specular-btn .specular-shine {
+  position: absolute; inset: 1px; border-radius: 15px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.14), transparent 40%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 860px) {
+  .pv-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .pv-hero { padding-top: 40px; }
+  .demo-stage { margin: 12px 12px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .blur-text .bt-word { opacity: 1; filter: none; transform: none; }
+}

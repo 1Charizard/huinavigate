@@ -40,26 +40,8 @@
   }
 
   /* ============================================================
-     WORKS:卡片交错入场 + 轻微视差
+     WORKS:由 CardSwap 组件自管理(GSAP 堆叠轮换)
      ============================================================ */
-  const workCards = document.querySelectorAll('#works .card');
-  if (workCards.length) {
-    if (reduceMotion) {
-      gsap.set(workCards, { y: 0 });
-    } else {
-      gsap.from(workCards, {
-        y: 60, duration: 0.9, stagger: 0.15,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '#works .cards', start: 'top 85%' },
-      });
-      workCards.forEach((card, i) => {
-        gsap.to(card, {
-          y: i % 2 === 0 ? -18 : 18, ease: 'none',
-          scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true },
-        });
-      });
-    }
-  }
 
   /* ============================================================
      SHOWCASE:mockup 入场 + 特性列表交错

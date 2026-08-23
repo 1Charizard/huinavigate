@@ -87,20 +87,15 @@
   let _boot = bootIntro; // 占位,实际在文件末尾调用
   void _boot;
 
-  /* ---------- 骨架屏生命周期(作品卡片) ---------- */
-  const cards = document.querySelectorAll('.card');
-  const revealCards = () => {
-    cards.forEach((card, i) => {
-      setTimeout(() => {
-        card.classList.remove('is-loading');
-        card.classList.add('is-ready');
-      }, 250 + i * 160);
-    });
+  /* ---------- 骨架屏生命周期(works 卡片堆叠) ---------- */
+  const worksSkeleton = document.getElementById('worksSkeleton');
+  const revealWorks = () => {
+    if (worksSkeleton) worksSkeleton.classList.add('hidden');
   };
   if (reduceMotion) {
-    cards.forEach(c => { c.classList.remove('is-loading'); c.classList.add('is-ready'); });
+    revealWorks();
   } else {
-    window.addEventListener('load', () => setTimeout(revealCards, 900));
+    window.addEventListener('load', () => setTimeout(revealWorks, 800));
   }
 
   /* ---------- 导航滚动状态 ---------- */
@@ -220,18 +215,7 @@
       el.addEventListener('pointerleave', () => { el.style.transform = ''; });
     });
 
-    /* 卡片 3D tilt */
-    cards.forEach(card => {
-      card.addEventListener('pointermove', e => {
-        if (card.classList.contains('is-loading')) return;
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transform =
-          `perspective(900px) rotateX(${-py * 8}deg) rotateY(${px * 10}deg) translateY(-4px)`;
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-    });
+    /* 卡片 3D tilt 已由 CardSwap(GSAP) 接管,不再单独 tilt */
 
     window.addEventListener('beforeunload', () => { if (raf) cancelAnimationFrame(raf); });
   } else {
@@ -240,11 +224,233 @@
   }
 
   /* ============================================================
+     集成组件(Border Glow / CardSwap / ScrollExpand / Line Sidebar / ClickSpark)
+     ============================================================ */
+
+  /* ---------- Border Glow(锥形描边辉光,随指针) ---------- */
+  if (!reduceMotion) {
+    document.querySelectorAll('[data-glow]').forEach(card => {
+      const onGlowMove = e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width / 2, cy = rect.height / 2;
+        const dx = Math.abs(x - cx), dy = Math.abs(y - cy);
+        let kx = Infinity, ky = Infinity;
+        if (dx !== 0) kx = cx / dx;
+        if (dy !== 0) ky = cy / dy;
+        const edge = Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
+        let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+        if (angle < 0) angle += 360;
+        card.style.setProperty('--edge-proximity', `${(edge * 100).toFixed(2)}`);
+        card.style.setProperty('--cursor-angle', `${angle.toFixed(2)}deg`);
+      };
+      const onGlowLeave = () => card.style.setProperty('--edge-proximity', '0');
+      card.addEventListener('pointermove', onGlowMove);
+      card.addEventListener('pointerleave', onGlowLeave);
+    });
+  }
+
+  /* ---------- Card Swap(GSAP 弹性落牌轮换) ---------- */
+  const worksSwap = document.getElementById('worksSwap');
+  if (worksSwap && window.gsap && !reduceMotion) {
+    const swapCards = [...worksSwap.querySelectorAll('.swap-card')];
+    const distX = 66, distY = 58;
+    const slots = swapCards.map((_, i) => ({ x: i * distX, y: -i * distY, zIndex: swapCards.length - i }));
+    const place = (el, slot) => {
+      gsap.set(el, { x: slot.x, y: slot.y, z: -slot.x * 1.5, xPercent: -50, yPercent: -50, zIndex: slot.zIndex, force3D: true });
+    };
+    let order = swapCards.map((_, i) => i);
+    swapCards.forEach((el, i) => place(el, slots[i]));
+
+    let swapTimer = 0;
+    let paused = false;
+    const swap = () => {
+      if (paused || order.length < 2) return;
+      const [front, ...rest] = order;
+      const elFront = swapCards[front];
+      const tl = gsap.timeline();
+      tl.to(elFront, { y: '+=430', duration: 1.1, ease: 'elastic.out(0.6,0.4)' });
+      rest.forEach((idx, i) => {
+        const slot = slots[i];
+        tl.set(swapCards[idx], { zIndex: slot.zIndex }, '-=0.5');
+        tl.to(swapCards[idx], { x: slot.x, y: slot.y, z: -slot.x * 1.5, duration: 0.9, ease: 'power2.inOut' }, '-=0.5');
+      });
+      const backSlot = slots[swapCards.length - 1];
+      tl.call(() => gsap.set(elFront, { zIndex: backSlot.zIndex }), undefined, '-=0.3');
+      tl.to(elFront, { x: backSlot.x, y: backSlot.y, z: -backSlot.x * 1.5, duration: 0.9, ease: 'elastic.out(0.6,0.4)' }, '-=0.4');
+      tl.call(() => { order = [...rest, front]; });
+    };
+    setTimeout(() => { swap(); swapTimer = setInterval(swap, 4600); }, 1100);
+    worksSwap.addEventListener('pointerenter', () => { paused = true; });
+    worksSwap.addEventListener('pointerleave', () => { paused = false; });
+  } else if (worksSwap && window.gsap) {
+    // reduce-motion: 静态叠放,展示第一张
+    const c0 = worksSwap.querySelector('.swap-card');
+    if (c0) gsap.set(c0, { xPercent: -50, yPercent: -50 });
+  }
+
+  /* ---------- Scroll Expand(窗口滚动驱动画面展开) ---------- */
+  const seEl = document.querySelector('[data-scroll-expand]');
+  if (seEl) {
+    const seTrack = seEl.querySelector('.scroll-expand__track');
+    const seFrame = seEl.querySelector('.scroll-expand__frame');
+    const seMedia = seEl.querySelector('.scroll-expand__media');
+    const seScrim = seEl.querySelector('.scroll-expand__scrim');
+    const seTitle = seEl.querySelector('.scroll-expand__title');
+    const seHint = seEl.querySelector('.scroll-expand__hint');
+    const seOverlay = seEl.querySelector('.scroll-expand__overlay');
+    const DIST = 1.1, HOLD = 0.3;
+    let stageH = 0;
+
+    const measureSe = () => {
+      stageH = window.innerHeight;
+      seTrack.style.height = `${stageH * (1 + DIST + HOLD)}px`;
+    };
+    const smooth = t => t * t * (3 - 2 * t);
+    const applySe = p => {
+      const e = Math.min(Math.max(p, 0), 1);
+      const s = smooth(e);
+      const inset = 42 - 42 * s;
+      seFrame.style.clipPath = `inset(${inset}% 29% ${inset}% 29% round ${24 - 24 * s}px)`;
+      seMedia.style.transform = `scale(${1.35 - 0.35 * s})`;
+      seScrim.style.opacity = `${0.45 * s}`;
+      seTitle.style.opacity = `${1 - smooth(Math.min(e / 0.5, 1))}`;
+      seTitle.style.transform = `translateY(${-40 * s}px) scale(${1 + 0.06 * s})`;
+      seHint.style.opacity = `${1 - Math.min(e / 0.12, 1)}`;
+      seOverlay.style.opacity = `${smooth(Math.max(0, (e - 0.55) / 0.45))}`;
+      seOverlay.style.transform = `translateY(${20 * (1 - smooth(Math.max(0, (e - 0.55) / 0.45)))}px)`;
+    };
+    const readSe = () => {
+      const top = seTrack.getBoundingClientRect().top;
+      const span = stageH * DIST;
+      return -top / span;
+    };
+    const onSeScroll = () => applySe(readSe());
+    measureSe();
+    applySe(readSe());
+    window.addEventListener('scroll', onSeScroll, { passive: true });
+    window.addEventListener('resize', () => { measureSe(); onSeScroll(); });
+  }
+
+  /* ---------- Line Sidebar(章节导航 + 指针平滑 + 滚动高亮) ---------- */
+  const sideNav = document.getElementById('sideNav');
+  if (sideNav) {
+    const sideItems = [...sideNav.querySelectorAll('li')];
+    const lsTargets = sideItems.map(() => 0);
+    const lsCurrents = sideItems.map(() => 0);
+    let lsLast = performance.now();
+    let lsRaf = 0;
+    const lsRun = now => {
+      const dt = Math.min((now - lsLast) / 1000, 0.05);
+      lsLast = now;
+      const k = 1 - Math.exp(-dt / 0.09);
+      let moving = false;
+      sideItems.forEach((el, i) => {
+        const next = lsCurrents[i] + (lsTargets[i] - lsCurrents[i]) * k;
+        const settled = Math.abs(lsTargets[i] - next) < 0.002;
+        lsCurrents[i] = settled ? lsTargets[i] : next;
+        el.style.setProperty('--effect', lsCurrents[i].toFixed(4));
+        if (!settled) moving = true;
+      });
+      lsRaf = moving ? requestAnimationFrame(lsRun) : 0;
+    };
+    const lsKick = () => { if (!lsRaf) { lsLast = performance.now(); lsRaf = requestAnimationFrame(lsRun); } };
+
+    sideNav.addEventListener('pointermove', e => {
+      const rect = sideNav.getBoundingClientRect();
+      const py = e.clientY - rect.top;
+      sideItems.forEach((el, i) => {
+        const center = el.offsetTop + el.offsetHeight / 2;
+        const d = Math.abs(py - center);
+        const t = Math.max(0, 1 - d / 70);
+        lsTargets[i] = t * t * (3 - 2 * t);
+      });
+      lsKick();
+    });
+    sideNav.addEventListener('pointerleave', () => {
+      lsTargets.forEach((_, i) => { lsTargets[i] = 0; });
+      lsKick();
+    });
+
+    // 滚动高亮当前章节
+    const seTargets = sideItems.map(li => document.getElementById(li.dataset.sec));
+    const onSideScroll = () => {
+      let active = 0;
+      seTargets.forEach((sec, i) => {
+        if (sec && sec.getBoundingClientRect().top < window.innerHeight * 0.45) active = i;
+      });
+      sideItems.forEach((el, i) => el.classList.toggle('active', i === active));
+    };
+    window.addEventListener('scroll', onSideScroll, { passive: true });
+    onSideScroll();
+
+    sideItems.forEach(li => {
+      li.addEventListener('click', () => {
+        const sec = document.getElementById(li.dataset.sec);
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  }
+
+  /* ---------- Click Spark(全页点击火花) ---------- */
+  if (!reduceMotion) {
+    const sparkCanvas = document.createElement('canvas');
+    sparkCanvas.id = 'sparkCanvas';
+    document.body.appendChild(sparkCanvas);
+    const sctx = sparkCanvas.getContext('2d');
+    const SCOLORS = ['#d4a017', '#f0c75e', '#e0b8c8'];
+    let sparks = [];
+    let sRaf = 0;
+    const sResize = () => {
+      sparkCanvas.width = innerWidth;
+      sparkCanvas.height = innerHeight;
+    };
+    sResize();
+    window.addEventListener('resize', sResize);
+    const easeOutS = t => 1 - Math.pow(1 - t, 3);
+    const sDraw = ts => {
+      sctx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+      sparks = sparks.filter(s => ts - s.start < s.duration);
+      sparks.forEach(s => {
+        const p = (ts - s.start) / s.duration;
+        const e = easeOutS(p);
+        const dist = e * s.radius;
+        const len = s.size * (1 - e);
+        sctx.strokeStyle = s.color;
+        sctx.lineWidth = 2;
+        sctx.globalAlpha = 1 - p;
+        sctx.beginPath();
+        sctx.moveTo(s.x + dist * Math.cos(s.angle), s.y + dist * Math.sin(s.angle));
+        sctx.lineTo(s.x + (dist + len) * Math.cos(s.angle), s.y + (dist + len) * Math.sin(s.angle));
+        sctx.stroke();
+      });
+      sctx.globalAlpha = 1;
+      sRaf = requestAnimationFrame(sDraw);
+    };
+    sRaf = requestAnimationFrame(sDraw);
+    document.addEventListener('pointerdown', e => {
+      const now = performance.now();
+      for (let i = 0; i < 9; i++) {
+        sparks.push({
+          x: e.clientX, y: e.clientY,
+          angle: (Math.PI * 2 * i) / 9 + Math.random() * 0.4,
+          radius: 26 + Math.random() * 20,
+          size: 7 + Math.random() * 5,
+          start: now,
+          duration: 380 + Math.random() * 140,
+          color: SCOLORS[Math.floor(Math.random() * SCOLORS.length)]
+        });
+      }
+    });
+  }
+
+  /* ============================================================
      i18n(zh / en)
      ============================================================ */
   const I18N = {
     zh: {
-      'nav.about': '关于', 'nav.works': '作品', 'nav.showcase': '介绍',
+      'nav.about': '关于', 'nav.works': '作品', 'nav.showcase': '介绍', 'nav.se': '产品',
       'nav.skills': '技能', 'nav.contact': '联系',
       'hero.sub': '探索、构建、创造。',
       'hero.learn': '了解更多', 'hero.cta': '开始探索',
@@ -254,6 +460,9 @@
       'works.title': '正在创造的东西。',
       'works.c1t': 'huinavigate', 'works.c1d': '个人主页 —— 探索设计与交互的边界。', 'works.c1l': '查看项目',
       'works.c2t': '下一个项目', 'works.c2d': '正在酝酿中 —— 敬请期待。', 'works.c2l': '关注更新',
+      'works.c3t': 'GitHub', 'works.c3d': '我的开源主页与全部仓库。', 'works.c3l': '访问 GitHub',
+      'se.title': '探索、构建、创造。', 'se.hint': '继续向下滚动',
+      'se.subtitle': '一个会讲故事的主页', 'se.cta': '看看它是怎么做的',
       'showcase.title': '这个主页本身就是作品。',
       'showcase.d1t': '像素马赛克开场',
       'showcase.d1d': '加载完成即触发 PixelSwap 中心扩散揭幕，每一像素都是一扇通往内容的窗口。',
@@ -272,7 +481,7 @@
       'footer.nav': '导航', 'footer.links': '链接', 'footer.email': '邮箱',
     },
     en: {
-      'nav.about': 'About', 'nav.works': 'Works', 'nav.showcase': 'Showcase',
+      'nav.about': 'About', 'nav.works': 'Works', 'nav.showcase': 'Showcase', 'nav.se': 'Product',
       'nav.skills': 'Skills', 'nav.contact': 'Contact',
       'hero.sub': 'Explore. Build. Create.',
       'hero.learn': 'Learn more', 'hero.cta': 'Start Exploring',
@@ -282,6 +491,9 @@
       'works.title': 'Things I\'m building.',
       'works.c1t': 'huinavigate', 'works.c1d': 'Personal homepage — exploring the edge of design and interaction.', 'works.c1l': 'View project',
       'works.c2t': 'Next Project', 'works.c2d': 'Brewing — stay tuned.', 'works.c2l': 'Follow updates',
+      'works.c3t': 'GitHub', 'works.c3d': 'My open-source homepage and repositories.', 'works.c3l': 'Visit GitHub',
+      'se.title': 'Explore. Build. Create.', 'se.hint': 'Keep scrolling',
+      'se.subtitle': 'A homepage that tells a story', 'se.cta': 'See how it works',
       'showcase.title': 'This homepage is the product.',
       'showcase.d1t': 'Pixel-mosaic opening',
       'showcase.d1d': 'A PixelSwap center-burst reveal plays the moment the page finishes loading — every pixel is a window into the content.',

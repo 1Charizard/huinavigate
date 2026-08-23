@@ -31,7 +31,7 @@
     </div>
     <div class="ps-layer ps-layer-b" data-visible="false" aria-hidden="true">
       <div class="intro-hero">
-        <h1 class="hero-title intro-hero-title">huinavigate</h1>
+        <h1 class="hero-title gradient-hero intro-hero-title">huinavigate</h1>
         <p class="hero-sub intro-hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
         <div class="hero-links intro-hero-links">
           <a class="link-arrow" href="#about" data-i18n="hero.learn">了解更多 <span class="arrow">›</span></a>
@@ -56,12 +56,23 @@
     </nav>
   </header>
 
+  <!-- 章节导航(Line Sidebar,桌面端) -->
+  <aside class="line-sidebar-fixed" id="sideNav" aria-label="章节导航">
+    <ul>
+      <li data-sec="about"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.about">关于</span></li>
+      <li data-sec="works"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.works">作品</span></li>
+      <li data-sec="se"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.se">产品</span></li>
+      <li data-sec="skills"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.skills">技能</span></li>
+      <li data-sec="contact"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.contact">联系</span></li>
+    </ul>
+  </aside>
+
   <main id="content" class="content">
 
     <!-- ============ HERO(沉浸式开场) ============ -->
     <section class="hero" id="hero" data-section="hero">
       <div class="hero-inner">
-        <h1 class="hero-title" id="heroTitle">huinavigate</h1>
+        <h1 class="hero-title gradient-hero" id="heroTitle">huinavigate</h1>
         <p class="hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
         <div class="hero-links">
           <a class="link-arrow" href="#about" data-i18n="hero.learn" data-magnetic>了解更多 <span class="arrow">›</span></a>
@@ -74,7 +85,8 @@
     <!-- ============ ABOUT(不对称双栏) ============ -->
     <section class="section about" id="about" data-section="about">
       <div class="section-inner about-inner">
-        <div class="about-visual reveal" aria-hidden="true">
+        <div class="about-visual glow-card reveal" data-glow aria-hidden="true">
+          <span class="edge-light"></span>
           <svg viewBox="0 0 160 160" role="img" aria-label="crystal">
             <defs>
               <linearGradient id="crystalGrad" x1="0" y1="0" x2="1" y2="1">
@@ -96,65 +108,52 @@
       </div>
     </section>
 
-    <!-- ============ WORKS(bento 卡片 + 骨架屏) ============ -->
+    <!-- ============ WORKS(CardSwap 弹性卡片堆叠) ============ -->
     <section class="section works" id="works" data-section="works">
       <div class="section-inner">
         <h2 class="section-title reveal" data-i18n="works.title">正在创造的东西。</h2>
-        <div class="cards">
-          <a class="card card-lg is-loading" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-magnetic>
-            <div class="card-visual v1" aria-hidden="true">
-              <svg viewBox="0 0 120 120" role="img" aria-label="globe">
-                <defs>
-                  <linearGradient id="globeGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#f0c75e"/>
-                    <stop offset="1" stop-color="#e0b8c8"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="60" cy="60" r="44" fill="url(#globeGrad)" opacity="0.9"/>
-                <ellipse cx="60" cy="60" rx="20" ry="44" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>
-                <path d="M16 60 H104 M60 16 C40 34 40 86 60 104 C80 86 80 34 60 16" fill="none" stroke="rgba(29,29,31,0.25)" stroke-width="1.5"/>
-              </svg>
-            </div>
-            <div class="card-body">
-              <h3 data-i18n="works.c1t">huinavigate</h3>
-              <p data-i18n="works.c1d">个人主页 —— 探索设计与交互的边界。</p>
-              <span class="card-link" data-i18n="works.c1l">查看项目 <span class="arrow">↗</span></span>
-            </div>
-            <div class="card-skeleton" aria-hidden="true">
-              <div class="sk-img"></div>
-              <div class="sk-body">
-                <div class="sk-line" style="width:62%"></div>
-                <div class="sk-line" style="width:88%"></div>
-                <div class="sk-line" style="width:44%"></div>
-              </div>
-            </div>
+        <div class="works-swap" id="worksSwap" data-cards>
+          <a class="swap-card sc1" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-card>
+            <span class="sc-index" aria-hidden="true">01</span>
+            <span class="sc-title" data-i18n="works.c1t">huinavigate</span>
+            <span class="sc-desc" data-i18n="works.c1d">个人主页 —— 探索设计与交互的边界。</span>
+            <span class="sc-link" data-i18n="works.c1l">查看项目 <span class="arrow">↗</span></span>
           </a>
-          <a class="card is-loading" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-magnetic>
-            <div class="card-visual v2" aria-hidden="true">
-              <svg viewBox="0 0 120 120" role="img" aria-label="spark">
-                <defs>
-                  <linearGradient id="sparkGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#e6d4ef"/>
-                    <stop offset="1" stop-color="#cbaee0"/>
-                  </linearGradient>
-                </defs>
-                <path d="M60 10 L69 51 L110 60 L69 69 L60 110 L51 69 L10 60 L51 51 Z" fill="url(#sparkGrad)" opacity="0.9"/>
-              </svg>
-            </div>
-            <div class="card-body">
-              <h3 data-i18n="works.c2t">下一个项目</h3>
-              <p data-i18n="works.c2d">正在酝酿中 —— 敬请期待。</p>
-              <span class="card-link" data-i18n="works.c2l">关注更新 <span class="arrow">↗</span></span>
-            </div>
-            <div class="card-skeleton" aria-hidden="true">
-              <div class="sk-img"></div>
-              <div class="sk-body">
-                <div class="sk-line" style="width:62%"></div>
-                <div class="sk-line" style="width:88%"></div>
-                <div class="sk-line" style="width:44%"></div>
-              </div>
-            </div>
+          <a class="swap-card sc2" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-card>
+            <span class="sc-index" aria-hidden="true">02</span>
+            <span class="sc-title" data-i18n="works.c2t">下一个项目</span>
+            <span class="sc-desc" data-i18n="works.c2d">正在酝酿中 —— 敬请期待。</span>
+            <span class="sc-link" data-i18n="works.c2l">关注更新 <span class="arrow">↗</span></span>
           </a>
+          <a class="swap-card sc3" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-card>
+            <span class="sc-index" aria-hidden="true">03</span>
+            <span class="sc-title" data-i18n="works.c3t">GitHub</span>
+            <span class="sc-desc" data-i18n="works.c3d">我的开源主页与全部仓库。</span>
+            <span class="sc-link" data-i18n="works.c3l">访问 GitHub <span class="arrow">↗</span></span>
+          </a>
+        </div>
+        <div class="works-skeleton" id="worksSkeleton" aria-hidden="true">
+          <div class="sk-block"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SE(ScrollExpand 滚动展开产品画面) ============ -->
+    <section class="se-section" id="se" data-section="se">
+      <div class="scroll-expand se-full" data-scroll-expand>
+        <div class="scroll-expand__track">
+          <div class="scroll-expand__stage">
+            <div class="scroll-expand__frame">
+              <div class="scroll-expand__media se-media"></div>
+              <div class="scroll-expand__scrim"></div>
+            </div>
+            <div class="scroll-expand__title" data-i18n="se.title">探索、构建、创造。</div>
+            <div class="scroll-expand__hint" data-i18n="se.hint">继续向下滚动</div>
+            <div class="scroll-expand__overlay">
+              <p class="se-overlay-title" data-i18n="se.subtitle">一个会讲故事的主页</p>
+              <a class="btn btn-primary" href="#showcase" data-i18n="se.cta">看看它是怎么做的</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>

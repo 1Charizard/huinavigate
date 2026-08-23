@@ -341,6 +341,57 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: 12px; color: rgba(255,255,255,0.75); pointer-events: none;
 }
 
+/* ---------- 9b. Scroll Expand Opening 合并开场 ---------- */
+.seo-demo-box {
+  position: relative; width: min(520px, 88%); aspect-ratio: 16 / 10;
+  border-radius: 20px; overflow: hidden;
+  background: linear-gradient(160deg, #1a1a24, #2a1a22 55%, #3a2430);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+}
+.seo-demo-box .ps-layer {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.45s ease;
+}
+.seo-demo-box .ps-layer[data-visible="false"] { opacity: 0; visibility: hidden; pointer-events: none; }
+.seo-idle {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #f0c75e 20%, #f3d9d3 50%, #e0b8c8 80%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* 组件内部窗口(与主页开场一致) */
+.seo-demo-box .seo-window { position: absolute; inset: 0; overflow: hidden; will-change: clip-path; }
+.seo-demo-box .seo-media {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 30% 40%, #f0c75e 0 12%, transparent 12.5%),
+    radial-gradient(circle at 60% 65%, #f3d9d3 0 18%, transparent 18.5%),
+    radial-gradient(circle at 80% 30%, #e0b8c8 0 10%, transparent 10.5%),
+    linear-gradient(160deg, #fdf3f5, #e0b8c8);
+  transform: scale(1.35);
+  will-change: transform;
+}
+.seo-demo-box .seo-scrim { position: absolute; inset: 0; background: rgba(29, 29, 31, 0.45); opacity: 0; }
+.seo-demo-box .seo-content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; text-align: center; padding: 0 24px;
+}
+.seo-demo-box .seo-brand {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 6vw, 52px); font-weight: 800; letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45), 0 0 40px rgba(240, 199, 94, 0.5);
+}
+.seo-demo-box .seo-tag {
+  font-family: var(--font-text);
+  font-size: clamp(14px, 2vw, 18px); font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+}
+
 /* ============================================================
    10. Card Swap
    ============================================================ */

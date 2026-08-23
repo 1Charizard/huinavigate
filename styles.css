@@ -104,8 +104,50 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
   position: fixed; inset: 0; z-index: 4000;
   overflow: hidden;
   transition: opacity 0.7s ease;
+  /* Scroll Expand 开场:窗口展开前由深色水晶底承接,展开后粉金媒体接管 */
+  background: linear-gradient(160deg, #1a1a24 0%, #2a1a22 55%, #3a2430 100%);
 }
 #intro.done { opacity: 0; pointer-events: none; }
+
+/* ---------- Scroll Expand 开场:粉金媒体窗口展开 ---------- */
+.seo-window {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  will-change: clip-path;
+}
+.seo-media {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 30% 40%, #f0c75e 0 12%, transparent 12.5%),
+    radial-gradient(circle at 60% 65%, #f3d9d3 0 18%, transparent 18.5%),
+    radial-gradient(circle at 80% 30%, #e0b8c8 0 10%, transparent 10.5%),
+    linear-gradient(160deg, #fdf3f5, #e0b8c8);
+  transform: scale(1.35);
+  will-change: transform;
+}
+.seo-scrim {
+  position: absolute; inset: 0;
+  background: rgba(29, 29, 31, 0.45);
+  opacity: 0;
+}
+.seo-content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px; text-align: center; padding: 0 24px;
+}
+.seo-brand {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 9vw, 104px);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.02;
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.45), 0 0 60px rgba(240, 199, 94, 0.55);
+}
+.seo-tag {
+  font-family: var(--font-text);
+  font-size: clamp(16px, 2.4vw, 24px); font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.4);
+}
 
 /* PixelSwap 通用层 */
 .ps-layer {

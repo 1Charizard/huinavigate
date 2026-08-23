@@ -53,26 +53,18 @@
 
     if (reduceMotion) { finishIntro(); return; }
 
-    // 序幕品牌停留 1.3s 后触发像素揭幕
+    // 深色品牌底停留片刻后,Scroll Expand 式粉金媒体窗口从中心展开揭幕
     setTimeout(() => {
-      if (typeof window.PixelSwap !== 'function') { finishIntro(); return; }
-      // 像素尺寸按视口自适应:PC 大屏用更小的像素(更细腻),手机保持小尺寸
-      const introPixelSize = Math.max(40, Math.min(56, Math.round(Math.min(window.innerWidth, window.innerHeight) / 24)));
-      window.PixelSwap(intro, {
-        to: 1,
-        pattern: 'center',
-        pixelSize: introPixelSize,
-        gap: 6,
-        radius: 16,
-        spin: 120,
-        scale: 0.3,
-        fade: true,
-        duration: 2800,
-        pixelDuration: 540,
-        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      if (typeof window.ScrollExpandOpening !== 'function') { finishIntro(); return; }
+      const dict = I18N[lang] || I18N.zh;
+      window.ScrollExpandOpening(intro, {
+        brand: 'huinavigate',
+        tag: dict['hero.sub'],
+        hold: 900,
+        expand: 1500,
         onComplete: finishIntro
       });
-    }, 1300);
+    }, 300);
   };
 
   /* ---------- 开场启动:移到 IIFE 末尾执行(确保 i18n 已初始化) ---------- */

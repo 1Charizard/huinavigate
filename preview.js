@@ -379,6 +379,38 @@
   }
 
   /* ============================================================
+     9b. Scroll Expand Opening — 合并开场演示
+     ============================================================ */
+  const seoBox = document.getElementById('seoOpenBox');
+  const seoReplay = document.getElementById('seoOpenReplay');
+  if (seoBox && window.ScrollExpandOpening) {
+    const runSeo = () => {
+      if (reduceMotion) return;
+      seoBox.querySelector('.seo-window')?.remove();
+      seoBox.querySelectorAll('.ps-layer').forEach((layer, i) => {
+        layer.dataset.visible = i === 0 ? 'true' : 'false';
+        if (i === 0) layer.removeAttribute('aria-hidden');
+        else layer.setAttribute('aria-hidden', 'true');
+      });
+      window.ScrollExpandOpening(seoBox, {
+        brand: 'huinavigate',
+        tag: '探索 · 构建 · 创造',
+        hold: 900,
+        expand: 1500
+      });
+    };
+    seoReplay.addEventListener('click', runSeo);
+    if ('IntersectionObserver' in window) {
+      const seoObs = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) { runSeo(); seoObs.disconnect(); }
+      }, { threshold: 0.4 });
+      seoObs.observe(seoBox);
+    } else {
+      runSeo();
+    }
+  }
+
+  /* ============================================================
      10. Card Swap — GSAP 弹性轮换
      ============================================================ */
   const cardSwap = document.getElementById('cardSwap');

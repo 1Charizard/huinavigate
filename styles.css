@@ -93,14 +93,10 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 .bg-scene {
   position: fixed; inset: 0; z-index: 0;
   background:
-    radial-gradient(ellipse 58% 50% at 50% 42%,
-      var(--bg-glow) 0%, var(--bg-pink) 44%, transparent 76%),
-    radial-gradient(ellipse 50% 44% at 50% 80%,
-      var(--bg-rose) 0%, transparent 72%),
-    radial-gradient(ellipse 24% 62% at 0% 50%,
-      var(--bg-edge) 0%, transparent 78%),
-    radial-gradient(ellipse 24% 62% at 100% 50%,
-      var(--bg-edge) 0%, transparent 78%),
+    radial-gradient(ellipse 70% 60% at 50% 42%,
+      var(--bg-glow) 0%, var(--bg-pink) 46%, transparent 78%),
+    radial-gradient(ellipse 58% 50% at 50% 82%,
+      var(--bg-rose) 0%, transparent 74%),
     radial-gradient(ellipse 30% 26% at 0% 0%, var(--bg-corner) 0%, transparent 70%),
     radial-gradient(ellipse 30% 26% at 100% 0%, var(--bg-corner) 0%, transparent 70%),
     radial-gradient(ellipse 30% 26% at 0% 100%, var(--bg-corner) 0%, transparent 70%),
@@ -171,14 +167,10 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 /* 序幕 B 层:粉嫩页面视觉(与真实页面一致,无缝衔接) */
 .ps-layer-b {
   background:
-    radial-gradient(ellipse 58% 50% at 50% 42%,
-      var(--bg-glow) 0%, var(--bg-pink) 44%, transparent 76%),
-    radial-gradient(ellipse 50% 44% at 50% 80%,
-      var(--bg-rose) 0%, transparent 72%),
-    radial-gradient(ellipse 24% 62% at 0% 50%,
-      var(--bg-edge) 0%, transparent 78%),
-    radial-gradient(ellipse 24% 62% at 100% 50%,
-      var(--bg-edge) 0%, transparent 78%),
+    radial-gradient(ellipse 70% 60% at 50% 42%,
+      var(--bg-glow) 0%, var(--bg-pink) 46%, transparent 78%),
+    radial-gradient(ellipse 58% 50% at 50% 82%,
+      var(--bg-rose) 0%, transparent 74%),
     radial-gradient(ellipse 30% 26% at 0% 0%, var(--bg-corner) 0%, transparent 70%),
     radial-gradient(ellipse 30% 26% at 100% 0%, var(--bg-corner) 0%, transparent 70%),
     radial-gradient(ellipse 30% 26% at 0% 100%, var(--bg-corner) 0%, transparent 70%),

@@ -10,6 +10,10 @@
   'use strict';
 
   const MAX_PIXELS = 220;
+  // 全屏/大容器按面积提高像素预算(小容器保持 220;1080p 开场约 900,2K 封顶 900),
+  // 避免 MAX_PIXELS 上限把 PC 大屏的像素强制放大成粗粝马赛克
+  const pixelBudget = (width, height) =>
+    Math.max(MAX_PIXELS, Math.min(900, Math.round((width * height) / 1800)));
   const KEYFRAME_STEPS = 14;
 
   const PATTERNS = {
@@ -81,8 +85,9 @@
     let columns = Math.max(1, Math.ceil((width + gap) / (size + gap)));
     let rows = Math.max(1, Math.ceil((height + gap) / (size + gap)));
 
-    if (columns * rows > MAX_PIXELS) {
-      size = Math.ceil(size * Math.sqrt((columns * rows) / MAX_PIXELS));
+    const budget = pixelBudget(width, height);
+    if (columns * rows > budget) {
+      size = Math.ceil(size * Math.sqrt((columns * rows) / budget));
       columns = Math.max(1, Math.ceil((width + gap) / (size + gap)));
       rows = Math.max(1, Math.ceil((height + gap) / (size + gap)));
     }

@@ -56,10 +56,12 @@
     // 序幕品牌停留 1.3s 后触发像素揭幕
     setTimeout(() => {
       if (typeof window.PixelSwap !== 'function') { finishIntro(); return; }
+      // 像素尺寸按视口自适应:PC 大屏用更小的像素(更细腻),手机保持小尺寸
+      const introPixelSize = Math.max(40, Math.min(56, Math.round(Math.min(window.innerWidth, window.innerHeight) / 24)));
       window.PixelSwap(intro, {
         to: 1,
         pattern: 'center',
-        pixelSize: 64,
+        pixelSize: introPixelSize,
         gap: 6,
         radius: 16,
         spin: 120,
@@ -301,18 +303,32 @@
     const seHint = seEl.querySelector('.scroll-expand__hint');
     const seOverlay = seEl.querySelector('.scroll-expand__overlay');
     const DIST = 1.1, HOLD = 0.3;
-    let stageH = 0;
+    let stageH = 0, stageW = 0;
+    let winInsetTop = 0, winInsetSide = 0;
 
     const measureSe = () => {
       stageH = window.innerHeight;
+      stageW = window.innerWidth;
       seTrack.style.height = `${stageH * (1 + DIST + HOLD)}px`;
+      /* 像素级"视频窗口":宽 min(680px, 78vw),按 1.6:1 高,再受 42vh 限制。
+         任何分辨率都保持 1.6:1 比例,PC 宽屏不再被百分比裁剪压成扁条 */
+      const RATIO = 1.6;
+      let winW = Math.min(680, stageW * 0.78);
+      let winH = winW / RATIO;
+      if (winH > stageH * 0.42) {
+        winH = stageH * 0.42;
+        winW = winH * RATIO;
+      }
+      winInsetTop = (stageH - winH) / 2;
+      winInsetSide = (stageW - winW) / 2;
     };
     const smooth = t => t * t * (3 - 2 * t);
     const applySe = p => {
       const e = Math.min(Math.max(p, 0), 1);
       const s = smooth(e);
-      const inset = 42 - 42 * s;
-      seFrame.style.clipPath = `inset(${inset}% 29% ${inset}% 29% round ${24 - 24 * s}px)`;
+      const it = winInsetTop * (1 - s);
+      const is = winInsetSide * (1 - s);
+      seFrame.style.clipPath = `inset(${it}px ${is}px ${it}px ${is}px round ${24 * (1 - s)}px)`;
       seMedia.style.transform = `scale(${1.35 - 0.35 * s})`;
       seScrim.style.opacity = `${0.45 * s}`;
       seTitle.style.opacity = `${1 - smooth(Math.min(e / 0.5, 1))}`;

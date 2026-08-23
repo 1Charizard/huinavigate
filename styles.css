@@ -132,7 +132,7 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 }
 .intro-brand {
   font-family: var(--font-display);
-  font-size: clamp(64px, 11vw, 128px);
+  font-size: clamp(64px, min(11vw, 17vh), 128px);
   font-weight: 800; letter-spacing: -0.03em; line-height: 1.02;
   background: linear-gradient(120deg, #f0c75e 20%, #f3d9d3 50%, #e0b8c8 80%);
   background-size: 200% auto;
@@ -254,7 +254,7 @@ body.ready .nav { opacity: 1; transform: none; }
    HERO(沉浸式开场 + 逐字 reveal)
    ============================================================ */
 .hero {
-  min-height: 100vh;
+  min-height: 100vh; min-height: 100dvh;
   display: flex; align-items: center; justify-content: center;
   text-align: center;
   padding: 0 24px;
@@ -263,7 +263,7 @@ body.ready .nav { opacity: 1; transform: none; }
 .hero-inner { max-width: 960px; }
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(64px, 11vw, 128px);
+  font-size: clamp(64px, min(11vw, 17vh), 128px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.02;
@@ -527,12 +527,14 @@ body.ready .hero-scroll { opacity: 1; }
 .scroll-expand.se-full { width: 100%; }
 .scroll-expand__track { position: relative; width: 100%; }
 .scroll-expand__stage {
-  position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden;
+  position: sticky; top: 0; height: 100vh; height: 100dvh; width: 100%; overflow: hidden;
   background: linear-gradient(160deg, #fdf3f5, #f3d9d3 55%, #e0b8c8);
 }
+/* 初始"视频窗口"由 JS 在加载时按像素重算并写入 clip-path;
+   此处 inset(0) 仅作为无 JS 时的全屏兜底,避免百分比窗口在 PC 宽屏上被压扁 */
 .scroll-expand__frame {
   position: absolute; inset: 0;
-  clip-path: inset(42% 29% 42% 29% round 24px);
+  clip-path: inset(0);
   will-change: clip-path;
 }
 .se-media {

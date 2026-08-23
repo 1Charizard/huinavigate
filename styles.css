@@ -36,13 +36,6 @@
   --font-text: "SF Pro Text", -apple-system, BlinkMacSystemFont,
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
-  /* 粉嫩水晶渐变(锁定单一色温:粉 + 金) */
-  --bg-corner: #2a1a22;
-  --bg-edge: #d9a9c0;
-  --bg-glow: #fdf3f5;
-  --bg-pink: #f3d9d3;
-  --bg-rose: #e0b8c8;
-
   /* 文字(近黑,保证彩底对比度) */
   --ink: #1d1d1f;
   --ink-soft: #4a4a4d;
@@ -67,7 +60,7 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-text);
-  background: #0d0d14;
+  background: #fdf3f5;
   color: var(--ink);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -92,17 +85,7 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
    ============================================================ */
 .bg-scene {
   position: fixed; inset: 0; z-index: 0;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 42%,
-      var(--bg-glow) 0%, var(--bg-pink) 46%, transparent 78%),
-    radial-gradient(ellipse 58% 50% at 50% 82%,
-      var(--bg-rose) 0%, transparent 74%),
-    radial-gradient(ellipse 30% 26% at 0% 0%, var(--bg-corner) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 26% at 100% 0%, var(--bg-corner) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 26% at 0% 100%, var(--bg-corner) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 26% at 100% 100%, var(--bg-corner) 0%, transparent 70%),
-    #0d0d14;
-  will-change: transform;
+  background: #fdf3f5;
 }
 
 /* 3D / 粒子层 */
@@ -164,18 +147,9 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 }
 @keyframes shimmer-text { to { background-position: 200% center; } }
 
-/* 序幕 B 层:粉嫩页面视觉(与真实页面一致,无缝衔接) */
+/* 序幕 B 层:与页面背景一致,无缝衔接 */
 .ps-layer-b {
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 42%,
-      var(--bg-glow) 0%, var(--bg-pink) 46%, transparent 78%),
-    radial-gradient(ellipse 58% 50% at 50% 82%,
-      var(--bg-rose) 0%, transparent 74%),
-    radial-gradient(ellipse 30% 26% at 0% 0%, var(--bg-corner) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 26% at 100% 0%, var(--bg-corner) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 26% at 0% 100%, var(--bg-corner) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 26% at 100% 100%, var(--bg-corner) 0%, transparent 70%),
-    #0d0d14;
+  background: #fdf3f5;
 }
 .intro-hero {
   position: absolute; inset: 0;

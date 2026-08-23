@@ -1,273 +1,346 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="no-js">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>huinavigate — 1Charizard</title>
-  <meta name="description" content="huinavigate — 探索、构建、创造。1Charizard 的个人主页。">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>huinavigate — 设备检测</title>
+  <meta name="description" content="huinavigate — 自动检测设备，为你提供最佳浏览体验。">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f0c75e'/%3E%3Cstop offset='1' stop-color='%23e0b8c8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='-apple-system,Segoe UI,sans-serif' font-size='34' font-weight='700' text-anchor='middle' fill='%231d1d1f'%3Eh%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css">
-  <noscript><style>.no-js #intro{display:none!important}.no-js .hero-title,.no-js .hero-sub,.no-js .hero-links,.no-js .hero-scroll,.no-js .reveal{opacity:1!important;transform:none!important}.no-js .nav{opacity:1!important;transform:none!important}</style></noscript>
+  <style>
+    /* ============================================================
+       huinavigate — 设备检测页(轻量,无重型依赖)
+       粉金水晶渐变 + 品牌 + 检测动画 + 3s 倒计时自动跳转
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { height: 100%; }
+    body {
+      height: 100%; overflow: hidden;
+      font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont,
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: #1d1d1f;
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(120% 120% at 0% 0%, rgba(224, 184, 200, 0.5) 0%, rgba(224, 184, 200, 0) 48%),
+        radial-gradient(120% 120% at 100% 0%, rgba(240, 199, 94, 0.3) 0%, rgba(240, 199, 94, 0) 50%),
+        radial-gradient(130% 130% at 100% 100%, rgba(214, 160, 178, 0.55) 0%, rgba(214, 160, 178, 0) 52%),
+        radial-gradient(130% 130% at 0% 100%, rgba(240, 199, 94, 0.24) 0%, rgba(240, 199, 94, 0) 50%),
+        radial-gradient(70% 68% at 50% 44%, rgba(243, 217, 211, 0.98) 0%, rgba(243, 217, 211, 0.55) 55%, rgba(243, 217, 211, 0) 76%),
+        radial-gradient(58% 40% at 50% 100%, rgba(224, 184, 200, 0.92) 0%, rgba(224, 184, 200, 0.38) 55%, rgba(224, 184, 200, 0) 80%),
+        #fdf3f5;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* 粒子画布(轻量 2D 漂移粒子) */
+    #detectParticles {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+
+    .detect-box {
+      position: relative; z-index: 2;
+      text-align: center; max-width: 520px; padding: 0 24px;
+    }
+
+    /* 品牌 */
+    .detect-brand {
+      font-size: clamp(48px, 10vw, 84px);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
+      background-image: linear-gradient(90deg, #d4a017, #e0b8c8 35%, #f0c75e 55%, #f3d9d3 75%, #d4a017);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      animation: gradientFlow 4s ease infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes gradientFlow { to { background-position: 300% 0; } }
+
+    .detect-tag {
+      font-size: clamp(14px, 2.5vw, 18px);
+      color: #4a4a4d; font-weight: 500; letter-spacing: 0.02em;
+      margin-bottom: 44px;
+    }
+
+    /* 检测动画:扫描环 + 设备图标 */
+    .detect-scan {
+      position: relative; width: 96px; height: 96px; margin: 0 auto 32px;
+    }
+    .scan-ring {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(240, 199, 94, 0.25);
+    }
+    .scan-ring::before {
+      content: ''; position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: #f0c75e;
+      animation: spin 1.2s linear infinite;
+    }
+    .scan-ring::after {
+      content: ''; position: absolute; inset: 8px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-bottom-color: #e0b8c8;
+      animation: spin 1.8s linear infinite reverse;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .detect-icon {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px;
+      animation: iconPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); opacity: 0.75; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+
+    /* 状态文字 + 倒计时 */
+    .detect-status {
+      font-size: 15px; font-weight: 600; color: #6e6e73;
+      letter-spacing: 0.06em; margin-bottom: 12px;
+    }
+    .detect-countdown {
+      font-size: 13px; color: #8a6408;
+      letter-spacing: 0.1em;
+    }
+    .detect-countdown b { font-size: 16px; }
+
+    /* ===== 底部白条抽屉(所有端显示) ===== */
+    .detect-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      z-index: 2000;
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.66);
+      -webkit-backdrop-filter: saturate(160%) blur(20px);
+      backdrop-filter: saturate(160%) blur(20px);
+      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.1);
+      padding: 46px 24px calc(30px + env(safe-area-inset-bottom));
+      /* 露出 44px = 把手高度:白条可见在屏幕内,点击后整个窗口(含白条)一起上滑 */
+      transform: translateY(calc(100% - 44px));
+      transition: transform 0.55s cubic-bezier(0.32, 0.72, 0, 1);
+      will-change: transform;
+    }
+    .detect-sheet.open { transform: translateY(0); }
+
+    /* 小白条把手:交互热区严格贴合白条本身,点白条才有响应 */
+    .detect-handle {
+      /* 在抽屉内顶部:白条是窗口的一部分,点击弹出时跟随窗口一起移动 */
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 64px; height: 44px;
+      display: flex; align-items: flex-start; justify-content: center;
+      background: transparent; border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 1;
+    }
+    .detect-handle-bar {
+      width: 44px; height: 5px; border-radius: 3px;
+      background: rgba(29, 29, 31, 0.5);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      /* 上移 7px(在 -15px 基础上向下移 8px) */
+      transform: translateY(-7px);
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .detect-handle:hover .detect-handle-bar {
+      background: rgba(29, 29, 31, 0.75);
+      box-shadow: 0 0 12px rgba(240, 199, 94, 0.6);
+    }
+    .detect-handle:active .detect-handle-bar {
+      transform: translateY(-7px) scaleX(0.72);
+      background: rgba(29, 29, 31, 0.85);
+    }
+    .detect-sheet.open .detect-handle-bar {
+      background: rgba(29, 29, 31, 0.75);
+      box-shadow: 0 0 12px rgba(240, 199, 94, 0.55);
+    }
+    /* 手机端(mobile 判定):handle+白条一起上移 90px,打开时回到顶部跟随窗口 */
+    body[data-device="mobile"] .detect-handle {
+      top: -97px;
+      height: 44px;
+    }
+    body[data-device="mobile"] .detect-handle-bar { transform: translateY(0); }
+    body[data-device="mobile"] .detect-handle:hover .detect-handle-bar { transform: translateY(0); }
+    body[data-device="mobile"] .detect-handle:active .detect-handle-bar { transform: translateY(0) scaleX(0.72); }
+    body[data-device="mobile"] .detect-sheet.open .detect-handle { top: 0; }
+    body[data-device="mobile"] .detect-sheet.open .detect-handle-bar { transform: translateY(-7px); }
+    body[data-device="mobile"] .detect-sheet.open .detect-handle:hover .detect-handle-bar { transform: translateY(-7px); }
+    body[data-device="mobile"] .detect-sheet.open .detect-handle:active .detect-handle-bar { transform: translateY(-7px) scaleX(0.72); }
+
+    /* 抽屉内:手动选择 + 版权 */
+    .detect-choices {
+      display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .choice-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 13px 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.55);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      backdrop-filter: saturate(160%) blur(14px);
+      font-family: inherit; font-size: 14px; font-weight: 600; color: #1d1d1f;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .choice-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(212, 160, 23, 0.2);
+      background: rgba(255, 255, 255, 0.8);
+    }
+    .choice-btn:active { transform: scale(0.96); }
+    .choice-btn .ic { font-size: 18px; }
+
+    .detect-sheet-note {
+      text-align: center; font-size: 11px; color: #a0a0a4;
+      letter-spacing: 0.08em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scan-ring::before, .scan-ring::after, .detect-icon { animation: none; }
+      .detect-brand { animation: none; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- 全屏粉嫩水晶渐变背景 -->
-  <div class="bg-scene" aria-hidden="true"></div>
+  <!-- 轻量 2D 漂移粒子 -->
+  <canvas id="detectParticles" aria-hidden="true"></canvas>
 
-  <!-- 3D / 粒子特效层 -->
-  <div id="fx" aria-hidden="true"></div>
+  <div class="detect-box">
+    <h1 class="detect-brand">huinavigate</h1>
+    <p class="detect-tag">探索、构建、创造。</p>
 
-  <!-- 桌面光标 -->
-  <div id="cursorDot" class="cursor-dot" aria-hidden="true"></div>
-  <div id="cursorRing" class="cursor-ring" aria-hidden="true"></div>
-
-  <!-- 像素开场序幕:加载完成后 center 扩散揭示 hero -->
-  <div id="intro" aria-hidden="false">
-    <div class="ps-layer ps-layer-a" data-visible="true">
-      <div class="intro-content">
-        <span class="intro-brand">huinavigate</span>
-        <span class="intro-tag" data-i18n="hero.sub">探索、构建、创造。</span>
-      </div>
+    <div class="detect-scan" aria-hidden="true">
+      <div class="scan-ring"></div>
+      <div class="detect-icon" id="detectIcon">💻</div>
     </div>
-    <div class="ps-layer ps-layer-b" data-visible="false" aria-hidden="true">
-      <div class="intro-hero">
-        <h1 class="hero-title gradient-hero intro-hero-title">huinavigate</h1>
-        <p class="hero-sub intro-hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
-        <div class="hero-links intro-hero-links">
-          <a class="link-arrow" href="#about" data-i18n="hero.learn">了解更多 <span class="arrow">›</span></a>
-          <a class="btn btn-primary" href="#contact" data-i18n="hero.cta">开始探索</a>
-        </div>
-      </div>
+
+    <p class="detect-status" id="detectStatus">正在检测设备…</p>
+    <p class="detect-countdown" id="detectCountdown"></p>
+
+
     </div>
   </div>
 
-  <!-- 导航(苹果式毛玻璃) -->
-  <header class="nav" id="nav">
-    <nav class="nav-inner">
-      <a class="nav-logo" href="#hero" data-magnetic>huinavigate</a>
-      <div class="nav-links">
-        <a href="#about" data-i18n="nav.about">关于</a>
-        <a href="#works" data-i18n="nav.works">作品</a>
-        <a href="#showcase" data-i18n="nav.showcase">介绍</a>
-        <a href="#skills" data-i18n="nav.skills">技能</a>
-        <a href="#contact" data-i18n="nav.contact">联系</a>
-      </div>
-      <button class="lang-toggle" id="langToggle" aria-label="切换语言" data-magnetic>EN</button>
-    </nav>
-  </header>
+  <!-- 底部白条抽屉(白条在窗口内,点击后跟随窗口一起上滑) -->
+  <div class="detect-sheet" id="detectSheet">
+    <button class="detect-handle" id="detectHandle" aria-label="展开手动选择">
+      <span class="detect-handle-bar"></span>
+    </button>
+    <div class="detect-choices">
+      <button class="choice-btn" data-go="desktop"><span class="ic">💻</span>电脑版</button>
+      <button class="choice-btn" data-go="tablet"><span class="ic">📱</span>平板版</button>
+      <button class="choice-btn" data-go="mobile"><span class="ic">📲</span>手机版</button>
+    </div>
+    <p class="detect-sheet-note">huinavigate · 1Charizard · 自动检测中</p>
+  </div>
 
-  <!-- 章节导航(Line Sidebar,桌面端) -->
-  <aside class="line-sidebar-fixed" id="sideNav" aria-label="章节导航">
-    <ul>
-      <li data-sec="about"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.about">关于</span></li>
-      <li data-sec="works"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.works">作品</span></li>
-      <li data-sec="skills"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.skills">技能</span></li>
-      <li data-sec="contact"><span class="ls-marker"></span><span class="ls-label" data-i18n="nav.contact">联系</span></li>
-    </ul>
-  </aside>
+  <script>
+    (() => {
+      'use strict';
 
-  <main id="content" class="content">
+      /* ---------- 轻量粒子(粉金) ---------- */
+      const canvas = document.getElementById('detectParticles');
+      const ctx = canvas.getContext('2d');
+      let W = 0, H = 0, parts = [];
+      const COLORS = ['#e0b8c8', '#f0c75e', '#f3d9d3', '#d4a017'];
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = canvas.width = innerWidth * dpr;
+        H = canvas.height = innerHeight * dpr;
+        canvas.style.width = innerWidth + 'px';
+        canvas.style.height = innerHeight + 'px';
+        parts = Array.from({ length: innerWidth < 720 ? 30 : 60 }, () => ({
+          x: Math.random() * W, y: Math.random() * H,
+          r: (Math.random() * 2 + 0.8) * dpr,
+          vx: (Math.random() - 0.5) * 0.3 * dpr,
+          vy: (-Math.random() * 0.35 - 0.08) * dpr,
+          c: COLORS[Math.floor(Math.random() * COLORS.length)],
+          a: Math.random() * 0.4 + 0.2,
+        }));
+      };
+      resize();
+      window.addEventListener('resize', resize);
+      (function tick() {
+        ctx.clearRect(0, 0, W, H);
+        for (const p of parts) {
+          p.x += p.vx; p.y += p.vy;
+          if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+          if (p.x < -10) p.x = W + 10; else if (p.x > W + 10) p.x = -10;
+          ctx.globalAlpha = p.a;
+          ctx.fillStyle = p.c;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+        }
+        requestAnimationFrame(tick);
+      })();
 
-    <!-- ============ HERO(沉浸式开场) ============ -->
-    <section class="hero" id="hero" data-section="hero">
-      <div class="hero-inner">
-        <h1 class="hero-title gradient-hero" id="heroTitle">huinavigate</h1>
-        <p class="hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
-        <div class="hero-links">
-          <a class="link-arrow" href="#about" data-i18n="hero.learn" data-magnetic>了解更多 <span class="arrow">›</span></a>
-          <a class="btn btn-primary" href="#contact" data-i18n="hero.cta" data-magnetic>开始探索</a>
-        </div>
-      </div>
-      <div class="hero-scroll" aria-hidden="true"><span></span></div>
-    </section>
+      /* ---------- 设备检测 ---------- */
+      // 复用 device.js 的判定逻辑(内联轻量版,不依赖外部文件)
+      const detect = () => {
+        const w = innerWidth;
+        const fine = matchMedia('(pointer: fine)').matches;
+        const hover = matchMedia('(hover: hover)').matches;
+        const coarse = matchMedia('(pointer: coarse)').matches;
+        const touch = coarse || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        let type = 'desktop';
+        if (fine && hover && w > 1024) type = 'desktop';
+        else if (w > 720 && (coarse || touch)) type = 'tablet';
+        else if (fine && hover && w > 720 && w <= 1024) type = 'tablet';
+        else type = 'mobile';
+        return type;
+      };
 
-    <!-- ============ ABOUT(不对称双栏) ============ -->
-    <section class="section about" id="about" data-section="about">
-      <div class="section-inner about-inner">
-        <div class="about-visual glow-card reveal" data-glow aria-hidden="true">
-          <span class="edge-light"></span>
-          <svg viewBox="0 0 160 160" role="img" aria-label="crystal">
-            <defs>
-              <linearGradient id="crystalGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#f0c75e"/>
-                <stop offset="0.5" stop-color="#f3d9d3"/>
-                <stop offset="1" stop-color="#e0b8c8"/>
-              </linearGradient>
-            </defs>
-            <path d="M80 16 L136 80 L80 144 L24 80 Z" fill="url(#crystalGrad)" opacity="0.9"/>
-            <path d="M80 16 L80 144 M24 80 L136 80" stroke="rgba(29,29,31,0.18)" stroke-width="1.5"/>
-            <path d="M80 16 L136 80 L80 144 L24 80 Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
-          </svg>
-        </div>
-        <div class="about-copy">
-          <h2 class="section-title reveal" data-i18n="about.title">把好奇心，变成作品。</h2>
-          <p class="section-sub reveal" data-i18n="about.sub">我是一名创造者，相信设计与工程结合，能把想法打磨成可用的作品。</p>
-          <a class="link-arrow reveal" href="#works" data-i18n="about.learn" data-magnetic>了解更多 <span class="arrow">›</span></a>
-        </div>
-      </div>
-    </section>
+      // 支持 ?device=desktop|tablet|mobile 强制指定(测试用)
+      const forced = new URLSearchParams(location.search).get('device');
+      const device = ['desktop', 'tablet', 'mobile'].includes(forced) ? forced : detect();
+      // 写入 body[data-device],样式可用 body[data-device="mobile"] 精确命中(不受视口宽度影响)
+      document.body.dataset.device = device;
 
-    <!-- ============ WORKS(CardSwap 弹性卡片堆叠) ============ -->
-    <section class="section works" id="works" data-section="works">
-      <div class="section-inner">
-        <h2 class="section-title reveal" data-i18n="works.title">正在创造的东西。</h2>
-        <div class="works-swap" id="worksSwap" data-cards>
-          <a class="swap-card sc1" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-card>
-            <span class="sc-index" aria-hidden="true">01</span>
-            <span class="sc-title" data-i18n="works.c1t">huinavigate</span>
-            <span class="sc-desc" data-i18n="works.c1d">个人主页 —— 探索设计与交互的边界。</span>
-            <span class="sc-link" data-i18n="works.c1l">查看项目 <span class="arrow">↗</span></span>
-          </a>
-          <a class="swap-card sc2" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-card>
-            <span class="sc-index" aria-hidden="true">02</span>
-            <span class="sc-title" data-i18n="works.c2t">下一个项目</span>
-            <span class="sc-desc" data-i18n="works.c2d">正在酝酿中 —— 敬请期待。</span>
-            <span class="sc-link" data-i18n="works.c2l">关注更新 <span class="arrow">↗</span></span>
-          </a>
-          <a class="swap-card sc3" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-card>
-            <span class="sc-index" aria-hidden="true">03</span>
-            <span class="sc-title" data-i18n="works.c3t">GitHub</span>
-            <span class="sc-desc" data-i18n="works.c3d">我的开源主页与全部仓库。</span>
-            <span class="sc-link" data-i18n="works.c3l">访问 GitHub <span class="arrow">↗</span></span>
-          </a>
-        </div>
-        <div class="works-skeleton" id="worksSkeleton" aria-hidden="true">
-          <div class="sk-block"></div>
-        </div>
-      </div>
-    </section>
+      const ICONS = { desktop: '💻', tablet: '📱', mobile: '📲' };
+      const NAMES = { desktop: '电脑版', tablet: '平板版', mobile: '手机版' };
 
-    <!-- ============ SHOWCASE(产品介绍:浏览器 mockup + 特性) ============ -->
-    <section class="section showcase" id="showcase" data-section="showcase">
-      <div class="section-inner showcase-inner">
-        <div class="showcase-media reveal">
-          <div class="mock-frame">
-            <div class="mock-bar" aria-hidden="true">
-              <i></i><i></i><i></i>
-              <span></span>
-            </div>
-            <div class="ps-mockup" id="mockup">
-              <div class="ps-layer" data-visible="true">
-                <div class="mock-view mv-home" aria-hidden="true">
-                  <div class="mv-hero">
-                    <div class="mv-brand">huinavigate</div>
-                    <div class="mv-sub"></div>
-                    <div class="mv-btns"><span></span><span></span></div>
-                  </div>
-                </div>
-              </div>
-              <div class="ps-layer" data-visible="false" aria-hidden="true">
-                <div class="mock-view mv-works" aria-hidden="true">
-                  <div class="mv-card"></div>
-                  <div class="mv-card"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p class="mock-hint" data-i18n="showcase.hint">悬停查看像素切换</p>
-        </div>
-        <div class="showcase-copy">
-          <h2 class="section-title reveal" data-i18n="showcase.title">这个主页本身就是作品。</h2>
-          <ul class="feats">
-            <li class="feat reveal">
-              <span class="feat-num" aria-hidden="true">01</span>
-              <div class="feat-copy">
-                <h3 data-i18n="showcase.d1t">像素马赛克开场</h3>
-                <p data-i18n="showcase.d1d">加载完成即触发 PixelSwap 中心扩散揭幕，每一像素都是一扇通往内容的窗口。</p>
-              </div>
-            </li>
-            <li class="feat reveal">
-              <span class="feat-num" aria-hidden="true">02</span>
-              <div class="feat-copy">
-                <h3 data-i18n="showcase.d2t">3D 粒子背景</h3>
-                <p data-i18n="showcase.d2d">轻量 Three.js 粒子层，随光标与滚动响应，移动端自动降级。</p>
-              </div>
-            </li>
-            <li class="feat reveal">
-              <span class="feat-num" aria-hidden="true">03</span>
-              <div class="feat-copy">
-                <h3 data-i18n="showcase.d3t">骨架屏加载</h3>
-                <p data-i18n="showcase.d3d">内容就绪前以形状匹配的骨架占位，绝不白屏。</p>
-              </div>
-            </li>
-            <li class="feat reveal">
-              <span class="feat-num" aria-hidden="true">04</span>
-              <div class="feat-copy">
-                <h3 data-i18n="showcase.d4t">中英双语</h3>
-                <p data-i18n="showcase.d4d">一键切换语言，苹果式 SF Pro 排版与粉嫩金色系统。</p>
-              </div>
-            </li>
-          </ul>
-          <a class="btn btn-primary reveal" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-magnetic>
-            <span data-i18n="showcase.cta">访问项目</span> <span class="arrow" aria-hidden="true">↗</span>
-          </a>
-        </div>
-      </div>
-    </section>
+      const iconEl = document.getElementById('detectIcon');
+      const statusEl = document.getElementById('detectStatus');
+      const countdownEl = document.getElementById('detectCountdown');
+      iconEl.textContent = ICONS[device];
 
-    <!-- ============ SKILLS(弹性 chips) ============ -->
-    <section class="section skills" id="skills" data-section="skills">
-      <div class="section-inner">
-        <h2 class="section-title reveal" data-i18n="skills.title">我的工具箱。</h2>
-        <div class="chips">
-          <span class="chip" data-i18n="skills.s1" data-magnetic>前端开发</span>
-          <span class="chip" data-i18n="skills.s2" data-magnetic>UI/UX 设计</span>
-          <span class="chip" data-i18n="skills.s3" data-magnetic>Node.js</span>
-          <span class="chip" data-i18n="skills.s4" data-magnetic>创意编程</span>
-        </div>
-      </div>
-    </section>
+      /* 检测状态动画:先"检测中",再显示结果 */
+      setTimeout(() => {
+        statusEl.textContent = '检测到：' + NAMES[device];
+        let remain = 3;
+        countdownEl.innerHTML = remain + ' 秒后进入…';
+        const timer = setInterval(() => {
+          remain--;
+          if (remain <= 0) {
+            clearInterval(timer);
+            location.replace(device + '/');
+          } else {
+            countdownEl.innerHTML = '<b>' + remain + '</b> 秒后进入…';
+          }
+        }, 1000);
+      }, 1200);
 
-    <!-- ============ CONTACT(全屏收尾) ============ -->
-    <section class="section contact" id="contact" data-section="contact">
-      <div class="section-inner">
-        <h2 class="section-title reveal" data-i18n="contact.title">一起创造点什么？</h2>
-        <p class="section-sub reveal" data-i18n="contact.sub">无论是合作、交流还是闲聊，欢迎随时找我。</p>
-        <div class="contact-links reveal">
-          <a class="btn btn-primary" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-magnetic>GitHub</a>
-          <a class="btn btn-ghost" href="mailto:1Charizard@users.noreply.github.com" data-i18n="contact.email" data-magnetic>发邮件</a>
-        </div>
-      </div>
-    </section>
+      /* 小白条:点击丝滑上滑/下滑 */
+      const sheet = document.getElementById('detectSheet');
+      const handle = document.getElementById('detectHandle');
+      if (sheet && handle) {
+        handle.addEventListener('click', () => {
+          sheet.classList.toggle('open');
+        });
+      }
 
-    <!-- ============ FOOTER ============ -->
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-cols">
-          <div class="footer-col">
-            <h4 data-i18n="footer.nav">导航</h4>
-            <a href="#about" data-i18n="nav.about">关于</a>
-            <a href="#works" data-i18n="nav.works">作品</a>
-            <a href="#showcase" data-i18n="nav.showcase">介绍</a>
-            <a href="#skills" data-i18n="nav.skills">技能</a>
-            <a href="#contact" data-i18n="nav.contact">联系</a>
-          </div>
-          <div class="footer-col">
-            <h4 data-i18n="footer.links">链接</h4>
-            <a href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a>
-            <a href="mailto:1Charizard@users.noreply.github.com" data-i18n="footer.email">邮箱</a>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>© <span id="year"></span> huinavigate · 1Charizard</p>
-          <p><a href="#hero">↑ 回到顶部</a></p>
-        </div>
-      </div>
-    </footer>
-  </main>
-
-  <!-- GSAP(UMD,渐变背景与滚动编舞) -->
-  <script src="vendor/gsap.js"></script>
-  <script src="vendor/ScrollTrigger.js"></script>
-  <!-- 背景渐变与滚动编舞 -->
-  <script src="scene.js"></script>
-  <!-- 3D 粒子(ESM,可降级) -->
-  <script type="module" src="three-scene.js"></script>
-  <!-- PixelSwap 像素过渡(零依赖) -->
-  <script src="pixel-swap.js"></script>
-    <!-- Scroll Expand 开场(零依赖,粉金媒体窗口展开揭幕) -->
-    <script src="scroll-expand-open.js"></script>
-  <!-- 界面逻辑(开场/光标/磁吸/ripple/i18n/骨架) -->
-  <script src="main.js"></script>
+      /* 手动选择:立即跳转 */
+      document.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          location.href = btn.dataset.go + '/';
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

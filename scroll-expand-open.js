@@ -18,7 +18,11 @@
     if (!container) return;
     const cw = container.clientWidth;
     const ch = container.clientHeight;
-    if (!cw || !ch) return;
+    if (!cw || !ch) {
+      // 容器异常无尺寸时不能卡住开场:直接完成,保证 body.ready 一定添加
+      if (typeof opts.onComplete === 'function') opts.onComplete();
+      return;
+    }
 
     const hold = opts.hold ?? 900;
     const expand = opts.expand ?? 1500;

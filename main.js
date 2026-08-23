@@ -1,9 +1,16 @@
 /* ============================================================
-   huinavigate — UI logic
+  huinavigate — UI logic
    像素开场 / 光标 / 磁吸 / ripple / 3D tilt / i18n / 骨架屏
    ============================================================ */
 (() => {
   'use strict';
+
+  // 刷新置顶:阻止浏览器恢复滚动位置,每次刷新回顶部
+  if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+  // 双保险:load 与 bfcache 返回后再次强制置顶
+  window.addEventListener('load', () => window.scrollTo(0, 0));
+  window.addEventListener('pageshow', () => window.scrollTo(0, 0));
 
   const root = document.documentElement;
   root.classList.remove('no-js');
@@ -218,7 +225,7 @@
   }
 
   /* ============================================================
-     集成组件(Border Glow / CardSwap / ScrollExpand / Line Sidebar / ClickSpark)
+     集成组件(Border Glow / CardSwap / ClickSpark)
      ============================================================ */
 
   /* ---------- Border Glow(锥形描边辉光,随指针) ---------- */
@@ -264,7 +271,7 @@
       const [front, ...rest] = order;
       const elFront = swapCards[front];
       const tl = gsap.timeline();
-      tl.to(elFront, { y: '+=430', duration: 1.1, ease: 'elastic.out(0.6,0.4)' });
+      tl.to(elFront, { y: '+=300', duration: 1.6, ease: 'elastic.out(0.6,0.4)' });
       rest.forEach((idx, i) => {
         const slot = slots[i];
         tl.set(swapCards[idx], { zIndex: slot.zIndex }, '-=0.5');
@@ -282,66 +289,6 @@
     // reduce-motion: 静态叠放,展示第一张
     const c0 = worksSwap.querySelector('.swap-card');
     if (c0) gsap.set(c0, { xPercent: -50, yPercent: -50 });
-  }
-
-  /* ---------- Line Sidebar(章节导航 + 指针平滑 + 滚动高亮) ---------- */
-  const sideNav = document.getElementById('sideNav');
-  if (sideNav) {
-    const sideItems = [...sideNav.querySelectorAll('li')];
-    const lsTargets = sideItems.map(() => 0);
-    const lsCurrents = sideItems.map(() => 0);
-    let lsLast = performance.now();
-    let lsRaf = 0;
-    const lsRun = now => {
-      const dt = Math.min((now - lsLast) / 1000, 0.05);
-      lsLast = now;
-      const k = 1 - Math.exp(-dt / 0.09);
-      let moving = false;
-      sideItems.forEach((el, i) => {
-        const next = lsCurrents[i] + (lsTargets[i] - lsCurrents[i]) * k;
-        const settled = Math.abs(lsTargets[i] - next) < 0.002;
-        lsCurrents[i] = settled ? lsTargets[i] : next;
-        el.style.setProperty('--effect', lsCurrents[i].toFixed(4));
-        if (!settled) moving = true;
-      });
-      lsRaf = moving ? requestAnimationFrame(lsRun) : 0;
-    };
-    const lsKick = () => { if (!lsRaf) { lsLast = performance.now(); lsRaf = requestAnimationFrame(lsRun); } };
-
-    sideNav.addEventListener('pointermove', e => {
-      const rect = sideNav.getBoundingClientRect();
-      const py = e.clientY - rect.top;
-      sideItems.forEach((el, i) => {
-        const center = el.offsetTop + el.offsetHeight / 2;
-        const d = Math.abs(py - center);
-        const t = Math.max(0, 1 - d / 70);
-        lsTargets[i] = t * t * (3 - 2 * t);
-      });
-      lsKick();
-    });
-    sideNav.addEventListener('pointerleave', () => {
-      lsTargets.forEach((_, i) => { lsTargets[i] = 0; });
-      lsKick();
-    });
-
-    // 滚动高亮当前章节
-    const seTargets = sideItems.map(li => document.getElementById(li.dataset.sec));
-    const onSideScroll = () => {
-      let active = 0;
-      seTargets.forEach((sec, i) => {
-        if (sec && sec.getBoundingClientRect().top < window.innerHeight * 0.45) active = i;
-      });
-      sideItems.forEach((el, i) => el.classList.toggle('active', i === active));
-    };
-    window.addEventListener('scroll', onSideScroll, { passive: true });
-    onSideScroll();
-
-    sideItems.forEach(li => {
-      li.addEventListener('click', () => {
-        const sec = document.getElementById(li.dataset.sec);
-        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-      });
-    });
   }
 
   /* ---------- Click Spark(全页点击火花) ---------- */
@@ -489,4 +436,96 @@
 
   /* ---------- 真正启动开场(i18n 与 DOM 均已就绪) ---------- */
   bootIntro();
+
+  /* ============================================================
+     板块切换(滚动完全锁定 + 左侧玻璃按钮)
+     - wheel/touch 事件 preventDefault → 用户无法滚动页面
+     - 按钮用 window.scrollTo({top,behavior:'smooth'}) 平滑切板块
+     - 首尾按钮禁用;reduceMotion 时不禁用滚动(可正常浏览)
+     ============================================================ */
+    const ids = ['hero','about','works','showcase','skills','contact'];
+    const sections = ids.map(id => document.getElementById(id)).filter(Boolean);
+    // footer 已改为底部抽屉,不再作为跳转目标
+    if (sections.length > 1) {
+      let lock = false;
+      const DELAY = 700;
+
+      /* 锁定用户滚动:滚轮/触摸/键盘全部拦截 */
+      if (!reduceMotion) {
+      const blockScroll = e => e.preventDefault();
+      window.addEventListener('wheel', blockScroll, { passive: false });
+      window.addEventListener('touchmove', blockScroll, { passive: false });
+      window.addEventListener('keydown', e => {
+        if (['ArrowUp','ArrowDown','PageUp','PageDown','Home','End','Space'].includes(e.key)) e.preventDefault();
+      });
+      }
+
+      const getIdx = () => {
+        // 用视口顶部 scrollY 判定归属:落入 [top, top+height) 即该板块
+        // footer 矮也能正确识别(不再用视口中心)
+        const y = window.scrollY + 4;
+        let idx = 0;
+        for (let i = 0; i < sections.length; i++) {
+          const t = sections[i].offsetTop;
+          const b = t + sections[i].offsetHeight;
+          if (y >= t && y < b) { idx = i; break; }
+        }
+        // 兜底:未命中(如滚动到页底 footer 末端)取最后一个
+        if (y >= sections[sections.length-1].offsetTop) idx = sections.length - 1;
+        return idx;
+      };
+
+      const go = (i) => {
+        if (i < 0 || i >= sections.length) return;
+        lock = true;
+        // 3D 背景随跳转切换场景(形态/配色/运镜/旋转/质感全维度混合)
+        if (window.__fx) window.__fx.setScene(i);
+        window.scrollTo({ top: sections[i].offsetTop, behavior: 'smooth' });
+        setTimeout(() => { lock = false; }, DELAY);
+      };
+
+      const jump = (dir) => {
+        const cur = getIdx();
+        const tar = Math.max(0, Math.min(cur + dir, sections.length - 1));
+        if (tar !== cur) go(tar);
+      };
+
+      /* 左侧玻璃按钮:上一/下一板块(首尾禁用) */
+      const glassNav = document.getElementById('sideNavGlass');
+      if (glassNav) {
+        const prevBtn = glassNav.querySelector('[data-snv="prev"]');
+        const nextBtn = glassNav.querySelector('[data-snv="next"]');
+        const syncBtns = () => {
+          const cur = getIdx();
+          prevBtn.disabled = cur <= 0;
+          nextBtn.disabled = cur >= sections.length - 1;
+        };
+        prevBtn.addEventListener('click', () => { jump(-1); setTimeout(syncBtns, 800); });
+        nextBtn.addEventListener('click', () => { jump(1); setTimeout(syncBtns, 800); });
+        window.addEventListener('scroll', syncBtns, { passive: true });
+        syncBtns();
+      }
+
+      /* 底部抽屉:点击小白条丝滑上滑/下滑,链接跳转对应板块并收起 */
+      const footerSheet = document.getElementById('footerSheet');
+      const sheetHandle = document.getElementById('sheetHandle');
+      if (footerSheet && sheetHandle) {
+        sheetHandle.addEventListener('click', () => {
+          footerSheet.classList.toggle('open');
+        });
+        footerSheet.querySelectorAll('[data-sheet-link]').forEach(a => {
+          a.addEventListener('click', e => {
+            const hash = a.getAttribute('href');
+            if (!hash || !hash.startsWith('#')) return; // 外链/邮箱照常
+            e.preventDefault();
+            footerSheet.classList.remove('open');
+            const target = document.querySelector(hash);
+            if (target) {
+              const i = sections.indexOf(target);
+              if (i >= 0) go(i);
+            }
+          });
+        });
+      }
+    }
 })();

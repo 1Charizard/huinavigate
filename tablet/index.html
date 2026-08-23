@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>huinavigate — 平板版</title>
+  <meta name="description" content="huinavigate — 探索、构建、创造。1Charizard 的个人主页。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f0c75e'/%3E%3Cstop offset='1' stop-color='%23e0b8c8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='-apple-system,Segoe UI,sans-serif' font-size='34' font-weight='700' text-anchor='middle' fill='%231d1d1f'%3Eh%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    /* 刷新置顶:在 body 加载前禁用浏览器滚动位置恢复 */
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+  </script>
+  <noscript><style>.no-js #intro{display:none!important}.no-js .hero-title,.no-js .hero-sub,.no-js .hero-links,.no-js .hero-scroll,.no-js .reveal{opacity:1!important;transform:none!important}.no-js .nav{opacity:1!important;transform:none!important}
+  /* ===== 平板专属:触屏大按钮 + 滑动切换 + 大触控区 ===== */
+  .snv-btn { width: 44px; height: 44px; }
+  .snv-btn svg { width: 22px; height: 22px; }
+  .choice-swipe-hint {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 20px;
+    padding: 8px 18px; font-size: 13px; color: #6e6e73; z-index: 2000;
+    pointer-events: none; opacity: 0; transition: opacity 0.4s ease;
+  }
+  .choice-swipe-hint.show { opacity: 1; }
+  .side-nav-glass { left: 16px; padding: 10px 8px; gap: 12px; }
+</style></noscript>
+</head>
+<body data-device="tablet" data-touch="true">
+
+  <!-- 设备检测(最先加载,写 body[data-device]) -->
+  <script src="../device.js"></script>
+
+  <!-- 全屏粉嫩水晶渐变背景 -->
+  <div class="bg-scene" aria-hidden="true"></div>
+
+    <!-- Dark Veil 全屏暗纱背景(WebGL 粉金流动纱幕) -->
+    <div id="darkVeil" aria-hidden="true"></div>
+
+    <!-- Gradual Blur 顶部渐晕(导航下方向下淡出的毛玻璃过渡) -->
+    <div id="gradualBlur" aria-hidden="true"></div>
+
+  <!-- 3D / 粒子特效层 -->
+  <div id="fx" aria-hidden="true"></div>
+
+  <!-- 桌面光标 -->
+  <div id="cursorDot" class="cursor-dot" aria-hidden="true"></div>
+  <div id="cursorRing" class="cursor-ring" aria-hidden="true"></div>
+
+  <!-- 像素开场序幕:加载完成后 center 扩散揭示 hero -->
+  <div id="intro" aria-hidden="false">
+    <div class="ps-layer ps-layer-a" data-visible="true">
+      <div class="intro-content">
+        <span class="intro-brand">huinavigate</span>
+        <span class="intro-tag" data-i18n="hero.sub">探索、构建、创造。</span>
+      </div>
+    </div>
+    <div class="ps-layer ps-layer-b" data-visible="false" aria-hidden="true">
+      <div class="intro-hero">
+        <h1 class="hero-title gradient-hero intro-hero-title">huinavigate</h1>
+        <p class="hero-sub intro-hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
+        <div class="hero-links intro-hero-links">
+          <a class="link-arrow" href="#about" data-i18n="hero.learn">了解更多 <span class="arrow">›</span></a>
+          <a class="btn btn-primary" href="#contact" data-i18n="hero.cta">开始探索</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导航(苹果式毛玻璃) -->
+  <header class="nav" id="nav">
+    <nav class="nav-inner">
+      <a class="nav-logo" href="#hero" data-magnetic>huinavigate</a>
+      <div class="nav-links">
+        <a href="../" class="nav-switch">切换设备</a>
+        <a href="#about" data-i18n="nav.about">关于</a>
+        <a href="#works" data-i18n="nav.works">作品</a>
+        <a href="#showcase" data-i18n="nav.showcase">介绍</a>
+        <a href="#skills" data-i18n="nav.skills">技能</a>
+        <a href="#contact" data-i18n="nav.contact">联系</a>
+      </div>
+      <button class="lang-toggle" id="langToggle" aria-label="切换语言" data-magnetic>EN</button>
+    </nav>
+  </header>
+
+
+  <!-- 左侧玻璃上下切换按钮 -->
+  <aside class="side-nav-glass" id="sideNavGlass" aria-label="上下切换板块">
+    <button class="snv-btn" data-snv="prev" aria-label="上一板块">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="snv-btn" data-snv="next" aria-label="下一板块">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </aside>
+
+  <main id="content" class="content">
+
+    <!-- ============ HERO(沉浸式开场) ============ -->
+    <section class="hero" id="hero" data-section="hero">
+      <div class="hero-inner">
+        <h1 class="hero-title gradient-hero" id="heroTitle">huinavigate</h1>
+        <p class="hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
+        <div class="hero-links">
+          <a class="link-arrow" href="#about" data-i18n="hero.learn" data-magnetic>了解更多 <span class="arrow">›</span></a>
+          <a class="btn btn-primary" href="#contact" data-i18n="hero.cta" data-magnetic>开始探索</a>
+        </div>
+      </div>
+      <div class="hero-scroll" aria-hidden="true"><span></span></div>
+    </section>
+
+    <!-- ============ ABOUT(不对称双栏) ============ -->
+    <section class="section about" id="about" data-section="about">
+      <div class="section-inner about-inner">
+        <div class="about-visual glow-card reveal" data-glow aria-hidden="true">
+          <span class="edge-light"></span>
+          <svg viewBox="0 0 160 160" role="img" aria-label="crystal">
+            <defs>
+              <linearGradient id="crystalGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f0c75e"/>
+                <stop offset="0.5" stop-color="#f3d9d3"/>
+                <stop offset="1" stop-color="#e0b8c8"/>
+              </linearGradient>
+            </defs>
+            <path d="M80 16 L136 80 L80 144 L24 80 Z" fill="url(#crystalGrad)" opacity="0.9"/>
+            <path d="M80 16 L80 144 M24 80 L136 80" stroke="rgba(29,29,31,0.18)" stroke-width="1.5"/>
+            <path d="M80 16 L136 80 L80 144 L24 80 Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="about-copy">
+          <h2 class="section-title reveal" data-i18n="about.title">把好奇心，变成作品。</h2>
+          <p class="section-sub reveal" data-i18n="about.sub">我是一名创造者，相信设计与工程结合，能把想法打磨成可用的作品。</p>
+          <a class="link-arrow reveal" href="#works" data-i18n="about.learn" data-magnetic>了解更多 <span class="arrow">›</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORKS(CardSwap 弹性卡片堆叠) ============ -->
+    <section class="section works" id="works" data-section="works">
+      <div class="section-inner">
+        <h2 class="section-title reveal" data-i18n="works.title">正在创造的东西。</h2>
+        <div class="works-swap" id="worksSwap" data-cards>
+          <a class="swap-card sc1" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-card>
+            <span class="sc-index" aria-hidden="true">01</span>
+            <span class="sc-title" data-i18n="works.c1t">huinavigate</span>
+            <span class="sc-desc" data-i18n="works.c1d">个人主页 —— 探索设计与交互的边界。</span>
+            <span class="sc-link" data-i18n="works.c1l">查看项目 <span class="arrow">↗</span></span>
+          </a>
+          <a class="swap-card sc2" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-card>
+            <span class="sc-index" aria-hidden="true">02</span>
+            <span class="sc-title" data-i18n="works.c2t">下一个项目</span>
+            <span class="sc-desc" data-i18n="works.c2d">正在酝酿中 —— 敬请期待。</span>
+            <span class="sc-link" data-i18n="works.c2l">关注更新 <span class="arrow">↗</span></span>
+          </a>
+          <a class="swap-card sc3" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-card>
+            <span class="sc-index" aria-hidden="true">03</span>
+            <span class="sc-title" data-i18n="works.c3t">GitHub</span>
+            <span class="sc-desc" data-i18n="works.c3d">我的开源主页与全部仓库。</span>
+            <span class="sc-link" data-i18n="works.c3l">访问 GitHub <span class="arrow">↗</span></span>
+          </a>
+        </div>
+        <div class="works-skeleton" id="worksSkeleton" aria-hidden="true">
+          <div class="sk-block"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SHOWCASE(产品介绍:浏览器 mockup + 特性) ============ -->
+    <section class="section showcase" id="showcase" data-section="showcase">
+      <div class="section-inner showcase-inner">
+        <div class="showcase-media reveal">
+          <div class="mock-frame">
+            <div class="mock-bar" aria-hidden="true">
+              <i></i><i></i><i></i>
+              <span></span>
+            </div>
+            <div class="ps-mockup" id="mockup">
+              <div class="ps-layer" data-visible="true">
+                <div class="mock-view mv-home" aria-hidden="true">
+                  <div class="mv-hero">
+                    <div class="mv-brand">huinavigate</div>
+                    <div class="mv-sub"></div>
+                    <div class="mv-btns"><span></span><span></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="ps-layer" data-visible="false" aria-hidden="true">
+                <div class="mock-view mv-works" aria-hidden="true">
+                  <div class="mv-card"></div>
+                  <div class="mv-card"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="mock-hint" data-i18n="showcase.hint">悬停查看像素切换</p>
+        </div>
+        <div class="showcase-copy">
+          <h2 class="section-title reveal" data-i18n="showcase.title">这个主页本身就是作品。</h2>
+          <ul class="feats">
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">01</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d1t">像素马赛克开场</h3>
+                <p data-i18n="showcase.d1d">加载完成即触发 PixelSwap 中心扩散揭幕，每一像素都是一扇通往内容的窗口。</p>
+              </div>
+            </li>
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">02</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d2t">3D 粒子背景</h3>
+                <p data-i18n="showcase.d2d">轻量 Three.js 粒子层，随光标与滚动响应，移动端自动降级。</p>
+              </div>
+            </li>
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">03</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d3t">骨架屏加载</h3>
+                <p data-i18n="showcase.d3d">内容就绪前以形状匹配的骨架占位，绝不白屏。</p>
+              </div>
+            </li>
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">04</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d4t">中英双语</h3>
+                <p data-i18n="showcase.d4d">一键切换语言，苹果式 SF Pro 排版与粉嫩金色系统。</p>
+              </div>
+            </li>
+          </ul>
+          <a class="btn btn-primary reveal" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-magnetic>
+            <span data-i18n="showcase.cta">访问项目</span> <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKILLS(弹性 chips) ============ -->
+    <section class="section skills" id="skills" data-section="skills">
+      <div class="section-inner">
+        <h2 class="section-title reveal" data-i18n="skills.title">我的工具箱。</h2>
+        <div class="chips">
+          <span class="chip" data-i18n="skills.s1" data-magnetic>前端开发</span>
+          <span class="chip" data-i18n="skills.s2" data-magnetic>UI/UX 设计</span>
+          <span class="chip" data-i18n="skills.s3" data-magnetic>Node.js</span>
+          <span class="chip" data-i18n="skills.s4" data-magnetic>创意编程</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT(全屏收尾) ============ -->
+    <section class="section contact" id="contact" data-section="contact">
+      <div class="section-inner">
+        <h2 class="section-title reveal" data-i18n="contact.title">一起创造点什么？</h2>
+        <p class="section-sub reveal" data-i18n="contact.sub">无论是合作、交流还是闲聊，欢迎随时找我。</p>
+        <div class="contact-links reveal">
+          <a class="btn btn-primary" href="https://github.com/1Charizard" target="_blank" rel="noopener" data-magnetic>GitHub</a>
+          <a class="btn btn-ghost" href="mailto:1Charizard@users.noreply.github.com" data-i18n="contact.email" data-magnetic>发邮件</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ 底部抽屉(小白条把手 + 丝滑上滑的页脚导航) ============ -->
+  <footer class="footer footer-sheet" id="footerSheet">
+    <button class="sheet-handle" id="sheetHandle" aria-label="展开页脚导航">
+      <span class="sheet-handle-bar"></span>
+    </button>
+    <div class="footer-inner">
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4 data-i18n="footer.nav">导航</h4>
+          <a href="#about" data-sheet-link data-i18n="nav.about">关于</a>
+          <a href="#works" data-sheet-link data-i18n="nav.works">作品</a>
+          <a href="#showcase" data-sheet-link data-i18n="nav.showcase">介绍</a>
+          <a href="#skills" data-sheet-link data-i18n="nav.skills">技能</a>
+          <a href="#contact" data-sheet-link data-i18n="nav.contact">联系</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.links">链接</h4>
+          <a href="../" data-sheet-link>切换设备版本</a>
+          <a href="https://github.com/1Charizard" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:1Charizard@users.noreply.github.com" data-i18n="footer.email">邮箱</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="year"></span> huinavigate · 1Charizard</p>
+        <p><a href="#hero" data-sheet-link>↑ 回到顶部</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP(UMD,渐变背景与滚动编舞) -->
+  <script src="../vendor/gsap.js"></script>
+  <script src="../vendor/ScrollTrigger.js"></script>
+  <!-- 背景渐变与滚动编舞 -->
+  <script src="../scene.js"></script>
+    <!-- Dark Veil 全屏暗纱(WebGL 粉金流动,失败静默) -->
+    <script src="../dark-veil.js"></script>
+    <!-- Gradual Blur 顶部渐晕(导航下方毛玻璃过渡) -->
+    <script src="../gradual-blur.js"></script>
+  <!-- 3D 粒子(ESM,可降级) -->
+  <script type="module" src="../three-scene.js"></script>
+  <!-- PixelSwap 像素过渡(零依赖) -->
+  <script src="../pixel-swap.js"></script>
+    <!-- Scroll Expand 开场(零依赖,粉金媒体窗口展开揭幕) -->
+    <script src="../scroll-expand-open.js"></script>
+  <!-- 界面逻辑(开场/光标/磁吸/ripple/i18n/骨架) -->
+  <script src="../main.js"></script>
+
+  <!-- 平板滑动切换提示 -->
+  <div class="choice-swipe-hint" id="swipeHint">← 左右滑动切换板块 →</div>
+  <script>
+    /* 平板:左右滑动切换板块 */
+    (function() {
+      var sections = ['hero','about','works','showcase','skills','contact']
+        .map(function(id){ return document.getElementById(id); })
+        .filter(Boolean);
+      if (sections.length < 2) return;
+      var startX = 0, startY = 0, moved = false;
+      var hint = document.getElementById('swipeHint');
+      var hintTimer = 0;
+      function showHint(){
+        if (!hint) return;
+        hint.classList.add('show');
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(function(){ hint.classList.remove('show'); }, 2000);
+      }
+      setTimeout(showHint, 4000);
+      function curIdx(){
+        var y = window.scrollY + 4;
+        for (var i = 0; i < sections.length; i++) {
+          var t = sections[i].offsetTop, b = t + sections[i].offsetHeight;
+          if (y >= t && y < b) return i;
+        }
+        return sections.length - 1;
+      }
+      function go(i){
+        if (i < 0 || i >= sections.length) return;
+        if (window.__fx) window.__fx.setScene(i);
+        window.scrollTo({ top: sections[i].offsetTop, behavior: 'smooth' });
+      }
+      document.addEventListener('touchstart', function(e){
+        var t = e.touches[0];
+        startX = t.clientX; startY = t.clientY; moved = false;
+      }, { passive: true });
+      document.addEventListener('touchmove', function(e){
+        var t = e.touches[0];
+        var dx = t.clientX - startX, dy = t.clientY - startY;
+        // 水平滑动主导时拦截垂直滚动
+        if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          moved = true;
+          e.preventDefault();
+        }
+      }, { passive: false });
+      document.addEventListener('touchend', function(e){
+        if (!moved) return;
+        var t = e.changedTouches[0];
+        var dx = t.clientX - startX;
+        if (Math.abs(dx) < 50) return;
+        go(curIdx() + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>

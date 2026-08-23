@@ -284,63 +284,6 @@
     if (c0) gsap.set(c0, { xPercent: -50, yPercent: -50 });
   }
 
-  /* ---------- Scroll Expand(窗口滚动驱动画面展开) ---------- */
-  const seEl = document.querySelector('[data-scroll-expand]');
-  if (seEl) {
-    const seTrack = seEl.querySelector('.scroll-expand__track');
-    const seFrame = seEl.querySelector('.scroll-expand__frame');
-    const seMedia = seEl.querySelector('.scroll-expand__media');
-    const seScrim = seEl.querySelector('.scroll-expand__scrim');
-    const seTitle = seEl.querySelector('.scroll-expand__title');
-    const seHint = seEl.querySelector('.scroll-expand__hint');
-    const seOverlay = seEl.querySelector('.scroll-expand__overlay');
-    const DIST = 1.1, HOLD = 0.3;
-    let stageH = 0, stageW = 0;
-    let winInsetTop = 0, winInsetSide = 0;
-
-    const measureSe = () => {
-      stageH = window.innerHeight;
-      stageW = window.innerWidth;
-      seTrack.style.height = `${stageH * (1 + DIST + HOLD)}px`;
-      /* 像素级"视频窗口":宽 min(680px, 78vw),按 1.6:1 高,再受 42vh 限制。
-         任何分辨率都保持 1.6:1 比例,PC 宽屏不再被百分比裁剪压成扁条 */
-      const RATIO = 1.6;
-      let winW = Math.min(680, stageW * 0.78);
-      let winH = winW / RATIO;
-      if (winH > stageH * 0.42) {
-        winH = stageH * 0.42;
-        winW = winH * RATIO;
-      }
-      winInsetTop = (stageH - winH) / 2;
-      winInsetSide = (stageW - winW) / 2;
-    };
-    const smooth = t => t * t * (3 - 2 * t);
-    const applySe = p => {
-      const e = Math.min(Math.max(p, 0), 1);
-      const s = smooth(e);
-      const it = winInsetTop * (1 - s);
-      const is = winInsetSide * (1 - s);
-      seFrame.style.clipPath = `inset(${it}px ${is}px ${it}px ${is}px round ${24 * (1 - s)}px)`;
-      seMedia.style.transform = `scale(${1.35 - 0.35 * s})`;
-      seScrim.style.opacity = `${0.45 * s}`;
-      seTitle.style.opacity = `${1 - smooth(Math.min(e / 0.5, 1))}`;
-      seTitle.style.transform = `translateY(${-40 * s}px) scale(${1 + 0.06 * s})`;
-      seHint.style.opacity = `${1 - Math.min(e / 0.12, 1)}`;
-      seOverlay.style.opacity = `${smooth(Math.max(0, (e - 0.55) / 0.45))}`;
-      seOverlay.style.transform = `translateY(${20 * (1 - smooth(Math.max(0, (e - 0.55) / 0.45)))}px)`;
-    };
-    const readSe = () => {
-      const top = seTrack.getBoundingClientRect().top;
-      const span = stageH * DIST;
-      return -top / span;
-    };
-    const onSeScroll = () => applySe(readSe());
-    measureSe();
-    applySe(readSe());
-    window.addEventListener('scroll', onSeScroll, { passive: true });
-    window.addEventListener('resize', () => { measureSe(); onSeScroll(); });
-  }
-
   /* ---------- Line Sidebar(章节导航 + 指针平滑 + 滚动高亮) ---------- */
   const sideNav = document.getElementById('sideNav');
   if (sideNav) {
@@ -458,7 +401,7 @@
      ============================================================ */
   const I18N = {
     zh: {
-      'nav.about': '关于', 'nav.works': '作品', 'nav.showcase': '介绍', 'nav.se': '产品',
+      'nav.about': '关于', 'nav.works': '作品', 'nav.showcase': '介绍',
       'nav.skills': '技能', 'nav.contact': '联系',
       'hero.sub': '探索、构建、创造。',
       'hero.learn': '了解更多', 'hero.cta': '开始探索',
@@ -469,8 +412,6 @@
       'works.c1t': 'huinavigate', 'works.c1d': '个人主页 —— 探索设计与交互的边界。', 'works.c1l': '查看项目',
       'works.c2t': '下一个项目', 'works.c2d': '正在酝酿中 —— 敬请期待。', 'works.c2l': '关注更新',
       'works.c3t': 'GitHub', 'works.c3d': '我的开源主页与全部仓库。', 'works.c3l': '访问 GitHub',
-      'se.title': '探索、构建、创造。', 'se.hint': '继续向下滚动',
-      'se.subtitle': '一个会讲故事的主页', 'se.cta': '看看它是怎么做的',
       'showcase.title': '这个主页本身就是作品。',
       'showcase.d1t': '像素马赛克开场',
       'showcase.d1d': '加载完成即触发 PixelSwap 中心扩散揭幕，每一像素都是一扇通往内容的窗口。',
@@ -489,7 +430,7 @@
       'footer.nav': '导航', 'footer.links': '链接', 'footer.email': '邮箱',
     },
     en: {
-      'nav.about': 'About', 'nav.works': 'Works', 'nav.showcase': 'Showcase', 'nav.se': 'Product',
+      'nav.about': 'About', 'nav.works': 'Works', 'nav.showcase': 'Showcase',
       'nav.skills': 'Skills', 'nav.contact': 'Contact',
       'hero.sub': 'Explore. Build. Create.',
       'hero.learn': 'Learn more', 'hero.cta': 'Start Exploring',
@@ -500,8 +441,6 @@
       'works.c1t': 'huinavigate', 'works.c1d': 'Personal homepage — exploring the edge of design and interaction.', 'works.c1l': 'View project',
       'works.c2t': 'Next Project', 'works.c2d': 'Brewing — stay tuned.', 'works.c2l': 'Follow updates',
       'works.c3t': 'GitHub', 'works.c3d': 'My open-source homepage and repositories.', 'works.c3l': 'Visit GitHub',
-      'se.title': 'Explore. Build. Create.', 'se.hint': 'Keep scrolling',
-      'se.subtitle': 'A homepage that tells a story', 'se.cta': 'See how it works',
       'showcase.title': 'This homepage is the product.',
       'showcase.d1t': 'Pixel-mosaic opening',
       'showcase.d1d': 'A PixelSwap center-burst reveal plays the moment the page finishes loading — every pixel is a window into the content.',

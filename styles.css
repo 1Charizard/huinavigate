@@ -563,57 +563,6 @@ body.ready .hero-scroll { opacity: 1; }
 }
 
 /* ============================================================
-   SE(ScrollExpand 滚动展开产品画面)
-   ============================================================ */
-.se-section { position: relative; }
-.scroll-expand.se-full { width: 100%; }
-.scroll-expand__track { position: relative; width: 100%; }
-.scroll-expand__stage {
-  position: sticky; top: 0; height: 100vh; height: 100dvh; width: 100%; overflow: hidden;
-  background: linear-gradient(160deg, #fdf3f5, #f3d9d3 55%, #e0b8c8);
-}
-/* 初始"视频窗口"由 JS 在加载时按像素重算并写入 clip-path;
-   此处 inset(0) 仅作为无 JS 时的全屏兜底,避免百分比窗口在 PC 宽屏上被压扁 */
-.scroll-expand__frame {
-  position: absolute; inset: 0;
-  clip-path: inset(0);
-  will-change: clip-path;
-}
-.se-media {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(circle at 30% 40%, #f0c75e 0 12%, transparent 12.5%),
-    radial-gradient(circle at 60% 65%, #f3d9d3 0 18%, transparent 18.5%),
-    radial-gradient(circle at 80% 30%, #e0b8c8 0 10%, transparent 10.5%),
-    linear-gradient(135deg, #fdf3f5, #e0b8c8);
-  transform: scale(1.35);
-  will-change: transform;
-}
-.scroll-expand__scrim { position: absolute; inset: 0; background: rgba(29, 29, 31, 0.45); opacity: 0; }
-.scroll-expand__title {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display);
-  font-size: clamp(34px, 6vw, 72px); font-weight: 800; letter-spacing: -0.03em;
-  color: #fff; text-shadow: 0 2px 30px rgba(0, 0, 0, 0.45);
-  opacity: 1; will-change: opacity, transform; pointer-events: none; text-align: center; padding: 0 24px;
-}
-.scroll-expand__hint {
-  position: absolute; bottom: 26px; left: 0; right: 0; text-align: center;
-  font-size: 13px; color: rgba(255, 255, 255, 0.75); pointer-events: none; letter-spacing: 0.04em;
-}
-.scroll-expand__overlay {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 20px; text-align: center; padding: 0 24px;
-  opacity: 0; transform: translateY(20px); will-change: opacity, transform; pointer-events: none;
-}
-.scroll-expand__overlay .se-overlay-title {
-  font-family: var(--font-display);
-  font-size: clamp(26px, 4vw, 44px); font-weight: 800; color: #fff;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
-}
-.scroll-expand__overlay .btn { pointer-events: auto; }
-
-/* ============================================================
    章节导航(Line Sidebar,桌面端)
    ============================================================ */
 .line-sidebar-fixed {

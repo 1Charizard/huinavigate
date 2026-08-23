@@ -23,6 +23,8 @@
     { corner: '#2a1c24', edge: '#cf9db6', glow: '#fdf0f3', pink: '#f0d2ce', rose: '#d9aec2' },
     // works: 粉金
     { corner: '#2e1e1a', edge: '#d3a98a', glow: '#fdf4ec', pink: '#f5ddc6', rose: '#e6c39e' },
+    // showcase: 金粉(产品区)
+    { corner: '#33200f', edge: '#cfa468', glow: '#fdf6e8', pink: '#f7e3c4', rose: '#eccb96' },
     // skills: 桃粉
     { corner: '#2a1e1c', edge: '#d8ab86', glow: '#fdf5ea', pink: '#f6dfc8', rose: '#ecc7a0' },
     // contact: 暖粉金
@@ -38,7 +40,7 @@
   }
   applyPalette(PALETTES[0]);
 
-  const sections = ['.hero', '#about', '#works', '#skills', '#contact'];
+  const sections = ['.hero', '#about', '#works', '#showcase', '#skills', '#contact'];
 
   /* 背景:每章滚动从上一配色渐变到本章(scrub) */
   PALETTES.forEach((p, i) => {
@@ -68,7 +70,7 @@
   /* ============================================================
      HERO:标题视差 + 滚动渐隐
      ============================================================ */
-  const heroTitle = document.querySelector('.hero-title');
+  const heroTitle = document.querySelector('#hero .hero-title');
   if (!reduceMotion && heroTitle) {
     gsap.to(heroTitle, {
       yPercent: -18, opacity: 0.25, ease: 'none',

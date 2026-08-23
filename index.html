@@ -7,7 +7,7 @@
   <meta name="description" content="huinavigate — 探索、构建、创造。1Charizard 的个人主页。">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f0c75e'/%3E%3Cstop offset='1' stop-color='%23e0b8c8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='-apple-system,Segoe UI,sans-serif' font-size='34' font-weight='700' text-anchor='middle' fill='%231d1d1f'%3Eh%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
-  <noscript><style>.no-js #curtain{display:none!important}.no-js .hero-title,.no-js .hero-sub,.no-js .hero-links,.no-js .hero-scroll,.no-js .reveal{opacity:1!important;transform:none!important}.no-js .nav{opacity:1!important;transform:none!important}</style></noscript>
+  <noscript><style>.no-js #intro{display:none!important}.no-js .hero-title,.no-js .hero-sub,.no-js .hero-links,.no-js .hero-scroll,.no-js .reveal{opacity:1!important;transform:none!important}.no-js .nav{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 
@@ -21,11 +21,23 @@
   <div id="cursorDot" class="cursor-dot" aria-hidden="true"></div>
   <div id="cursorRing" class="cursor-ring" aria-hidden="true"></div>
 
-  <!-- 加载幕布 -->
-  <div id="curtain" aria-hidden="true">
-    <div class="curtain-inner">
-      <span class="curtain-brand">huinavigate</span>
-      <div class="curtain-bar"><i></i></div>
+  <!-- 像素开场序幕:加载完成后 center 扩散揭示 hero -->
+  <div id="intro" aria-hidden="false">
+    <div class="ps-layer ps-layer-a" data-visible="true">
+      <div class="intro-content">
+        <span class="intro-brand">huinavigate</span>
+        <span class="intro-tag" data-i18n="hero.sub">探索、构建、创造。</span>
+      </div>
+    </div>
+    <div class="ps-layer ps-layer-b" data-visible="false" aria-hidden="true">
+      <div class="intro-hero">
+        <h1 class="hero-title intro-hero-title">huinavigate</h1>
+        <p class="hero-sub intro-hero-sub" data-i18n="hero.sub">探索、构建、创造。</p>
+        <div class="hero-links intro-hero-links">
+          <a class="link-arrow" href="#about" data-i18n="hero.learn">了解更多 <span class="arrow">›</span></a>
+          <a class="btn btn-primary" href="#contact" data-i18n="hero.cta">开始探索</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -36,6 +48,7 @@
       <div class="nav-links">
         <a href="#about" data-i18n="nav.about">关于</a>
         <a href="#works" data-i18n="nav.works">作品</a>
+        <a href="#showcase" data-i18n="nav.showcase">介绍</a>
         <a href="#skills" data-i18n="nav.skills">技能</a>
         <a href="#contact" data-i18n="nav.contact">联系</a>
       </div>
@@ -86,7 +99,6 @@
     <!-- ============ WORKS(bento 卡片 + 骨架屏) ============ -->
     <section class="section works" id="works" data-section="works">
       <div class="section-inner">
-        <p class="section-eyebrow reveal" data-i18n="works.eyebrow">作品</p>
         <h2 class="section-title reveal" data-i18n="works.title">正在创造的东西。</h2>
         <div class="cards">
           <a class="card card-lg is-loading" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-magnetic>
@@ -147,6 +159,74 @@
       </div>
     </section>
 
+    <!-- ============ SHOWCASE(产品介绍:浏览器 mockup + 特性) ============ -->
+    <section class="section showcase" id="showcase" data-section="showcase">
+      <div class="section-inner showcase-inner">
+        <div class="showcase-media reveal">
+          <div class="mock-frame">
+            <div class="mock-bar" aria-hidden="true">
+              <i></i><i></i><i></i>
+              <span></span>
+            </div>
+            <div class="ps-mockup" id="mockup">
+              <div class="ps-layer" data-visible="true">
+                <div class="mock-view mv-home" aria-hidden="true">
+                  <div class="mv-hero">
+                    <div class="mv-brand">huinavigate</div>
+                    <div class="mv-sub"></div>
+                    <div class="mv-btns"><span></span><span></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="ps-layer" data-visible="false" aria-hidden="true">
+                <div class="mock-view mv-works" aria-hidden="true">
+                  <div class="mv-card"></div>
+                  <div class="mv-card"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="mock-hint" data-i18n="showcase.hint">悬停查看像素切换</p>
+        </div>
+        <div class="showcase-copy">
+          <h2 class="section-title reveal" data-i18n="showcase.title">这个主页本身就是作品。</h2>
+          <ul class="feats">
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">01</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d1t">像素马赛克开场</h3>
+                <p data-i18n="showcase.d1d">加载完成即触发 PixelSwap 中心扩散揭幕，每一像素都是一扇通往内容的窗口。</p>
+              </div>
+            </li>
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">02</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d2t">3D 粒子背景</h3>
+                <p data-i18n="showcase.d2d">轻量 Three.js 粒子层，随光标与滚动响应，移动端自动降级。</p>
+              </div>
+            </li>
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">03</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d3t">骨架屏加载</h3>
+                <p data-i18n="showcase.d3d">内容就绪前以形状匹配的骨架占位，绝不白屏。</p>
+              </div>
+            </li>
+            <li class="feat reveal">
+              <span class="feat-num" aria-hidden="true">04</span>
+              <div class="feat-copy">
+                <h3 data-i18n="showcase.d4t">中英双语</h3>
+                <p data-i18n="showcase.d4d">一键切换语言，苹果式 SF Pro 排版与粉嫩金色系统。</p>
+              </div>
+            </li>
+          </ul>
+          <a class="btn btn-primary reveal" href="https://github.com/1Charizard/huinavigate" target="_blank" rel="noopener" data-magnetic>
+            <span data-i18n="showcase.cta">访问项目</span> <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ SKILLS(弹性 chips) ============ -->
     <section class="section skills" id="skills" data-section="skills">
       <div class="section-inner">
@@ -180,6 +260,7 @@
             <h4 data-i18n="footer.nav">导航</h4>
             <a href="#about" data-i18n="nav.about">关于</a>
             <a href="#works" data-i18n="nav.works">作品</a>
+            <a href="#showcase" data-i18n="nav.showcase">介绍</a>
             <a href="#skills" data-i18n="nav.skills">技能</a>
             <a href="#contact" data-i18n="nav.contact">联系</a>
           </div>
@@ -197,14 +278,16 @@
     </footer>
   </main>
 
-  <!-- GSAP(UMD,用于渐变背景与滚动编舞) -->
+  <!-- GSAP(UMD,渐变背景与滚动编舞) -->
   <script src="vendor/gsap.js"></script>
   <script src="vendor/ScrollTrigger.js"></script>
   <!-- 背景渐变与滚动编舞 -->
   <script src="scene.js"></script>
   <!-- 3D 粒子(ESM,可降级) -->
   <script type="module" src="three-scene.js"></script>
-  <!-- 界面逻辑(光标/磁吸/ripple/i18n/骨架) -->
+  <!-- PixelSwap 像素过渡(零依赖) -->
+  <script src="pixel-swap.js"></script>
+  <!-- 界面逻辑(开场/光标/磁吸/ripple/i18n/骨架) -->
   <script src="main.js"></script>
 </body>
 </html>

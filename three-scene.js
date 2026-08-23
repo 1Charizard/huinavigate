@@ -63,14 +63,17 @@
       }, { passive: true });
     }
 
+    let introFade = 0;
     function tick() {
       ctx.clearRect(0, 0, w, h);
+      const target = document.body.classList.contains('ready') ? 1 : 0;
+      introFade += (target - introFade) * 0.04;
       for (const p of parts) {
         p.x += p.vx + mx * 0.4;
         p.y += p.vy + my * 0.2;
         if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
         if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
-        ctx.globalAlpha = p.a;
+        ctx.globalAlpha = p.a * introFade;
         ctx.fillStyle = p.c;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -156,6 +159,7 @@
     window.addEventListener('resize', onResize);
 
     const clock = new THREE.Clock();
+    let introFade = 0;
     function animate() {
       const t = clock.getElapsedTime();
       points.rotation.y = t * 0.05;
@@ -165,6 +169,10 @@
       camera.position.x = tx;
       camera.position.y = ty;
       camera.lookAt(0, 0, 0);
+      // 开场序幕期间隐藏,结束后淡入
+      const target = document.body.classList.contains('ready') ? 1 : 0;
+      introFade += (target - introFade) * 0.04;
+      material.opacity = 0.85 * introFade;
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }

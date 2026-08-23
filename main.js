@@ -1,6 +1,6 @@
 /* ============================================================
    huinavigate — UI logic
-   光标 / 磁吸 / ripple / 3D tilt / i18n / 骨架屏 / 开场
+   像素开场 / 光标 / 磁吸 / ripple / 3D tilt / i18n / 骨架屏
    ============================================================ */
 (() => {
   'use strict';
@@ -20,26 +20,72 @@
       const span = document.createElement('span');
       span.className = 'char';
       span.textContent = ch;
-      span.style.transitionDelay = `${0.35 + i * 0.045}s`;
+      span.style.transitionDelay = `${0.3 + i * 0.045}s`;
       return span;
     });
     heroTitle.textContent = '';
     chars.forEach(c => heroTitle.appendChild(c));
   }
 
-  /* ---------- 加载幕布 ---------- */
-  const curtain = document.getElementById('curtain');
-  const content = document.getElementById('content');
-  const ready = () => {
-    curtain.classList.add('done');
-    content.classList.add('entered');
+  /* ============================================================
+     像素开场(直接开场:无幕布)
+     ============================================================ */
+  const intro = document.getElementById('intro');
+  let introDone = false;
+
+  const finishIntro = () => {
+    if (introDone) return;
+    introDone = true;
     document.body.classList.add('ready');
+    document.body.classList.remove('intro-active');
+    root.classList.remove('intro-lock');
+    if (intro) {
+      intro.classList.add('done');
+      setTimeout(() => intro && intro.remove(), 800);
+    }
   };
-  if (reduceMotion) {
-    ready();
-  } else {
-    window.addEventListener('load', () => setTimeout(ready, 300));
-  }
+
+  const startIntro = () => {
+    if (!intro) { finishIntro(); return; }
+    root.classList.add('intro-lock');
+    document.body.classList.add('intro-active');
+    applyLang(lang); // 同步序幕内克隆文案
+
+    if (reduceMotion) { finishIntro(); return; }
+
+    // 序幕品牌停留 1.3s 后触发像素揭幕
+    setTimeout(() => {
+      if (typeof window.PixelSwap !== 'function') { finishIntro(); return; }
+      window.PixelSwap(intro, {
+        to: 1,
+        pattern: 'center',
+        pixelSize: 64,
+        gap: 6,
+        radius: 16,
+        spin: 120,
+        scale: 0.3,
+        fade: true,
+        duration: 2800,
+        pixelDuration: 540,
+        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        onComplete: finishIntro
+      });
+    }, 1300);
+  };
+
+  /* ---------- 开场启动:移到 IIFE 末尾执行(确保 i18n 已初始化) ---------- */
+  const bootIntro = () => {
+    if (document.readyState === 'complete') {
+      startIntro();
+    } else {
+      let started = false;
+      const go = () => { if (!started) { started = true; startIntro(); } };
+      window.addEventListener('load', go);
+      setTimeout(go, 2000);
+    }
+  };
+  let _boot = bootIntro; // 占位,实际在文件末尾调用
+  void _boot;
 
   /* ---------- 骨架屏生命周期(作品卡片) ---------- */
   const cards = document.querySelectorAll('.card');
@@ -54,7 +100,7 @@
   if (reduceMotion) {
     cards.forEach(c => { c.classList.remove('is-loading'); c.classList.add('is-ready'); });
   } else {
-    window.addEventListener('load', () => setTimeout(revealCards, 500));
+    window.addEventListener('load', () => setTimeout(revealCards, 900));
   }
 
   /* ---------- 导航滚动状态 ---------- */
@@ -77,6 +123,41 @@
     revealEls.forEach(el => io.observe(el));
   } else {
     revealEls.forEach(el => el.classList.add('is-in'));
+  }
+
+  /* ============================================================
+     PixelSwap 展示区 mockup hover 切换
+     ============================================================ */
+  const mockup = document.getElementById('mockup');
+  if (mockup && window.PixelSwap && !reduceMotion) {
+    let busy = false;
+    const swapTo = (to, pattern, easing) => {
+      if (busy) return;
+      busy = true;
+      window.PixelSwap(mockup, {
+        to,
+        pattern,
+        pixelSize: 40,
+        gap: 4,
+        radius: 12,
+        spin: 90,
+        scale: 0.3,
+        fade: true,
+        duration: 900,
+        pixelDuration: 320,
+        easing,
+        onComplete: () => { busy = false; }
+      });
+    };
+    mockup.addEventListener('pointerenter', () => swapTo(1, 'left-to-right', 'cubic-bezier(0.22, 1, 0.36, 1)'));
+    mockup.addEventListener('pointerleave', () => swapTo(0, 'right-to-left', 'cubic-bezier(0.22, 1, 0.36, 1)'));
+    mockup.addEventListener('click', () => {
+      if (mockup.querySelector('.ps-layer[data-visible="true"]') === mockup.children[0]) {
+        swapTo(1, 'center', 'cubic-bezier(0.22, 1, 0.36, 1)');
+      } else {
+        swapTo(0, 'center', 'cubic-bezier(0.22, 1, 0.36, 1)');
+      }
+    });
   }
 
   /* ============================================================
@@ -154,8 +235,8 @@
 
     window.addEventListener('beforeunload', () => { if (raf) cancelAnimationFrame(raf); });
   } else {
-    cursorDot.remove();
-    cursorRing.remove();
+    if (cursorDot) cursorDot.remove();
+    if (cursorRing) cursorRing.remove();
   }
 
   /* ============================================================
@@ -163,15 +244,26 @@
      ============================================================ */
   const I18N = {
     zh: {
-      'nav.about': '关于', 'nav.works': '作品', 'nav.skills': '技能', 'nav.contact': '联系',
+      'nav.about': '关于', 'nav.works': '作品', 'nav.showcase': '介绍',
+      'nav.skills': '技能', 'nav.contact': '联系',
       'hero.sub': '探索、构建、创造。',
       'hero.learn': '了解更多', 'hero.cta': '开始探索',
       'about.title': '把好奇心，变成作品。',
       'about.sub': '我是一名创造者，相信设计与工程结合，能把想法打磨成可用的作品。',
       'about.learn': '了解更多',
-      'works.eyebrow': '作品', 'works.title': '正在创造的东西。',
+      'works.title': '正在创造的东西。',
       'works.c1t': 'huinavigate', 'works.c1d': '个人主页 —— 探索设计与交互的边界。', 'works.c1l': '查看项目',
       'works.c2t': '下一个项目', 'works.c2d': '正在酝酿中 —— 敬请期待。', 'works.c2l': '关注更新',
+      'showcase.title': '这个主页本身就是作品。',
+      'showcase.d1t': '像素马赛克开场',
+      'showcase.d1d': '加载完成即触发 PixelSwap 中心扩散揭幕，每一像素都是一扇通往内容的窗口。',
+      'showcase.d2t': '3D 粒子背景',
+      'showcase.d2d': '轻量 Three.js 粒子层，随光标与滚动响应，移动端自动降级。',
+      'showcase.d3t': '骨架屏加载',
+      'showcase.d3d': '内容就绪前以形状匹配的骨架占位，绝不白屏。',
+      'showcase.d4t': '中英双语',
+      'showcase.d4d': '一键切换语言，苹果式 SF Pro 排版与粉嫩金色系统。',
+      'showcase.cta': '访问项目', 'showcase.hint': '悬停查看像素切换',
       'skills.title': '我的工具箱。',
       'skills.s1': '前端开发', 'skills.s2': 'UI/UX 设计', 'skills.s3': 'Node.js', 'skills.s4': '创意编程',
       'contact.title': '一起创造点什么？',
@@ -180,15 +272,26 @@
       'footer.nav': '导航', 'footer.links': '链接', 'footer.email': '邮箱',
     },
     en: {
-      'nav.about': 'About', 'nav.works': 'Works', 'nav.skills': 'Skills', 'nav.contact': 'Contact',
+      'nav.about': 'About', 'nav.works': 'Works', 'nav.showcase': 'Showcase',
+      'nav.skills': 'Skills', 'nav.contact': 'Contact',
       'hero.sub': 'Explore. Build. Create.',
       'hero.learn': 'Learn more', 'hero.cta': 'Start Exploring',
       'about.title': 'Turn curiosity into creations.',
       'about.sub': 'I\'m a creator who believes design and engineering together can polish ideas into working products.',
       'about.learn': 'Learn more',
-      'works.eyebrow': 'Works', 'works.title': 'Things I\'m building.',
+      'works.title': 'Things I\'m building.',
       'works.c1t': 'huinavigate', 'works.c1d': 'Personal homepage — exploring the edge of design and interaction.', 'works.c1l': 'View project',
       'works.c2t': 'Next Project', 'works.c2d': 'Brewing — stay tuned.', 'works.c2l': 'Follow updates',
+      'showcase.title': 'This homepage is the product.',
+      'showcase.d1t': 'Pixel-mosaic opening',
+      'showcase.d1d': 'A PixelSwap center-burst reveal plays the moment the page finishes loading — every pixel is a window into the content.',
+      'showcase.d2t': '3D particle background',
+      'showcase.d2d': 'A lightweight Three.js particle layer responds to cursor and scroll, with automatic downgrade on mobile.',
+      'showcase.d3t': 'Skeleton loading',
+      'showcase.d3d': 'Shape-matched skeleton placeholders keep the page from ever feeling blank.',
+      'showcase.d4t': 'Bilingual',
+      'showcase.d4d': 'One-click language toggle with Apple-style SF Pro typography and a pink-gold system.',
+      'showcase.cta': 'Visit project', 'showcase.hint': 'Hover to pixel-swap',
       'skills.title': 'My toolbox.',
       'skills.s1': 'Frontend', 'skills.s2': 'UI/UX Design', 'skills.s3': 'Node.js', 'skills.s4': 'Creative Coding',
       'contact.title': 'Let\'s build something together?',
@@ -204,7 +307,7 @@
   function applyLang(l) {
     lang = l;
     document.documentElement.lang = l === 'zh' ? 'zh-CN' : 'en';
-    langBtn.textContent = l === 'zh' ? 'EN' : '中';
+    if (langBtn) langBtn.textContent = l === 'zh' ? 'EN' : '中';
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
       const text = I18N[l] && I18N[l][key];
@@ -219,9 +322,12 @@
       }
     });
   }
-  langBtn.addEventListener('click', () => applyLang(lang === 'zh' ? 'en' : 'zh'));
+  if (langBtn) langBtn.addEventListener('click', () => applyLang(lang === 'zh' ? 'en' : 'zh'));
 
   /* ---------- Footer year ---------- */
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ---------- 真正启动开场(i18n 与 DOM 均已就绪) ---------- */
+  bootIntro();
 })();

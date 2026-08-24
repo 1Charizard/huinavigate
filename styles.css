@@ -106,6 +106,43 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
   pointer-events: none;
 }
 
+/* ============================================================
+   背景光斑层:两块柔和光斑缓慢漂移,水晶感呼吸
+   (纯装饰,pointer-events:none,不影响交互与性能)
+   ============================================================ */
+.bg-scene::before,
+.bg-scene::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  will-change: transform;
+}
+.bg-scene::before {
+  width: 46vmax; height: 46vmax;
+  left: -8vmax; top: 6vmax;
+  background: radial-gradient(circle, rgba(243, 217, 211, 0.85) 0%, rgba(224, 184, 200, 0.35) 45%, transparent 70%);
+  animation: bg-drift-a 26s ease-in-out infinite alternate;
+}
+.bg-scene::after {
+  width: 38vmax; height: 38vmax;
+  right: -6vmax; bottom: 4vmax;
+  background: radial-gradient(circle, rgba(240, 199, 94, 0.42) 0%, rgba(224, 184, 200, 0.22) 45%, transparent 70%);
+  animation: bg-drift-b 32s ease-in-out infinite alternate;
+}
+@keyframes bg-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(6vmax, 4vmax, 0) scale(1.12); }
+}
+@keyframes bg-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.05); }
+  to   { transform: translate3d(-5vmax, -3vmax, 0) scale(0.95); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-scene::before, .bg-scene::after { animation: none; }
+}
+
 /* Dark Veil 全屏暗纱背景(WebGL) */
 #darkVeil {
   position: fixed; inset: 0; z-index: 0;
@@ -288,7 +325,18 @@ body.js-cursor .cursor-dot, body.js-cursor .cursor-ring { opacity: 1; }
     background 0.3s ease, box-shadow 0.3s ease;
 }
 body.ready .nav { opacity: 1; transform: none; }
-.nav.scrolled { background: var(--glass-strong); box-shadow: 0 1px 16px rgba(0, 0, 0, 0.08); }
+.nav.scrolled {
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 1px 16px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.18);
+}
+.nav.scrolled::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 199, 94, 0.55), transparent);
+  pointer-events: none;
+}
 .nav-inner {
   max-width: 1080px; height: 100%; margin: 0 auto; padding: 0 22px;
   display: flex; align-items: center; gap: 20px;
@@ -362,6 +410,29 @@ body.ready .hero-title .char { opacity: 1; transform: none; }
   animation: hero-gradient-flow 7s linear infinite;
   text-shadow: none;
 }
+/* hero 标题柔光晕:粉金光雾,增强开场视觉冲击 */
+#heroTitle {
+  position: relative;
+  z-index: 1;
+}
+#heroTitle::after {
+  content: '';
+  position: absolute;
+  inset: -8% -12%;
+  background: radial-gradient(58% 72% at 50% 50%,
+    rgba(240, 199, 94, 0.26) 0%, rgba(224, 184, 200, 0.16) 45%, transparent 75%);
+  filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+  animation: hero-glow 6s ease-in-out infinite alternate;
+}
+@keyframes hero-glow {
+  from { opacity: 0.65; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #heroTitle::after { animation: none; }
+}
 .gradient-hero:hover .char { animation-play-state: paused; }
 @keyframes hero-gradient-flow { to { background-position: 300% 0; } }
 
@@ -408,7 +479,22 @@ body.ready .hero-links { opacity: 1; transform: none; transition-delay: 0.75s; }
   background: linear-gradient(120deg, #f0c75e, #d4a017);
   color: #1d1d1f;
   box-shadow: 0 8px 26px rgba(212, 160, 23, 0.35);
+  position: relative;
+  overflow: hidden;
 }
+/* 扫光:悬停时一道柔白流光扫过按钮 */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -40%; bottom: -40%;
+  width: 38%;
+  left: -60%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.btn-primary:hover::after { left: 130%; }
 .btn-primary:hover { transform: scale(1.04); box-shadow: 0 14px 38px rgba(240, 199, 94, 0.55); }
 .btn-ghost {
   border: 1.5px solid rgba(212, 160, 23, 0.55);
@@ -469,6 +555,18 @@ body.ready .hero-scroll { opacity: 1; }
   color: var(--ink);
   margin-bottom: 20px;
 }
+/* 板块英文小标签:金色小字,提升层次 */
+.section-kicker {
+  display: block;
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
 .section-sub {
   font-family: var(--font-text);
   font-size: clamp(16px, 2vw, 19px);
@@ -520,6 +618,16 @@ body.ready .hero-scroll { opacity: 1; }
   box-shadow: 0 20px 54px rgba(0, 0, 0, 0.16);
   transform-style: preserve-3d; backface-visibility: hidden;
   will-change: transform;
+  overflow: hidden;
+}
+/* 玻璃高光条:卡片顶部一道斜向柔光,增强立体感 */
+.swap-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -20%; right: -20%; height: 46%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+  border-radius: var(--radius) var(--radius) 50% 50%;
+  pointer-events: none;
 }
 .sc1 { background: linear-gradient(135deg, #f3d9d3, #e0b8c8); }
 .sc2 { background: linear-gradient(135deg, #f0c75e, #d4a017); }

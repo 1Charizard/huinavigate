@@ -256,7 +256,11 @@
   const worksSwap = document.getElementById('worksSwap');
   if (worksSwap && window.gsap && !reduceMotion) {
     const swapCards = [...worksSwap.querySelectorAll('.swap-card')];
-    const distX = 66, distY = 58;
+    /* 手机端缩小堆叠偏移,避免卡片溢出屏幕 */
+    const _isPhone = () => document.body.dataset.device === 'phone'
+      || (window.__device && window.__device.type === 'phone');
+    const distX = _isPhone() ? 36 : 66, distY = _isPhone() ? 32 : 58;
+    const flyY = _isPhone() ? 220 : 300;
     const slots = swapCards.map((_, i) => ({ x: i * distX, y: -i * distY, zIndex: swapCards.length - i }));
     const place = (el, slot) => {
       gsap.set(el, { x: slot.x, y: slot.y, z: -slot.x * 1.5, xPercent: -50, yPercent: -50, zIndex: slot.zIndex, force3D: true });
@@ -271,7 +275,7 @@
       const [front, ...rest] = order;
       const elFront = swapCards[front];
       const tl = gsap.timeline();
-      tl.to(elFront, { y: '+=300', duration: 1.6, ease: 'elastic.out(0.6,0.4)' });
+      tl.to(elFront, { y: `+=${flyY}`, duration: 1.6, ease: 'elastic.out(0.6,0.4)' });
       rest.forEach((idx, i) => {
         const slot = slots[i];
         tl.set(swapCards[idx], { zIndex: slot.zIndex }, '-=0.5');
@@ -450,11 +454,16 @@
       let lock = false;
       const DELAY = 700;
 
-      /* 锁定用户滚动:滚轮/触摸/键盘全部拦截 */
+      /* 锁定用户滚动:滚轮/键盘拦截;手机端放行 touchmove 允许正常滑动 */
       if (!reduceMotion) {
       const blockScroll = e => e.preventDefault();
+      const isPhone = () => document.body.dataset.device === 'phone'
+        || (window.__device && window.__device.type === 'phone');
       window.addEventListener('wheel', blockScroll, { passive: false });
-      window.addEventListener('touchmove', blockScroll, { passive: false });
+      // 手机端不拦截触摸滚动,保留丝滑的手指滑动浏览体验
+      if (!isPhone()) {
+        window.addEventListener('touchmove', blockScroll, { passive: false });
+      }
       window.addEventListener('keydown', e => {
         if (['ArrowUp','ArrowDown','PageUp','PageDown','Home','End','Space'].includes(e.key)) e.preventDefault();
       });

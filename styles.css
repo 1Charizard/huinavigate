@@ -900,16 +900,114 @@ body[data-device="mobile"] .footer-sheet.open .sheet-handle:active .sheet-handle
   .feats { text-align: left; }
 }
 
-/* ---------- 手机(≤720px):单栏,紧凑 ---------- */
+/* ---------- 手机(≤720px):单栏,紧凑,触控优先 ---------- */
 @media (max-width: 720px) {
-  .nav-links { gap: 12px; }
-  .nav-links a { font-size: 11px; }
-  .nav-links a:nth-child(3) { display: none; }
-  .hero-title { font-size: clamp(48px, 14vw, 80px); letter-spacing: -0.04em; }
-  .section { padding: 140px 20px; }
-  .contact { padding: 60px 20px; }
-  .contact .section-title { font-size: clamp(34px, 9vw, 52px); }
-  .contact .section-sub { font-size: 15px; margin-bottom: 20px; }
+  /* === 导航栏:精简链接,避免拥挤 === */
+  .nav-inner { padding: 0 16px; gap: 10px; }
+  .nav-logo { font-size: 15px; }
+  .nav-links { gap: 10px; }
+  .nav-links a { font-size: 11px; padding: 2px 0; }
+  /* 手机端隐藏"切换设备"和"介绍",只留:关于/作品/技能/联系 */
+  .nav-links a:nth-child(1) { display: none; } /* 切换设备 */
+  .nav-links a:nth-child(4) { display: none; } /* 介绍(showcase) */
+  .lang-toggle { font-size: 11px; padding: 4px 10px; }
+
+  /* === HERO:更紧凑的标题与按钮 === */
+  .hero-title { font-size: clamp(44px, 13vw, 72px); letter-spacing: -0.04em; }
+  .hero-sub { font-size: clamp(15px, 3.8vw, 18px); margin-top: 14px; }
+  .hero-links { margin-top: 24px; gap: 18px; }
+  .btn { padding: 11px 22px; font-size: 14px; }
+  .link-arrow { font-size: 15px; }
+  .hero-scroll { bottom: 60px; } /* 避开底部抽屉把手 */
+
+  /* === 分区:减小上下padding,内容更紧凑 === */
+  .section { padding: 90px 20px; min-height: auto; }
+  .section.works { padding-top: 70px; }
+  .section-title { font-size: clamp(26px, 6.5vw, 38px); margin-bottom: 14px; }
+  .section-sub { font-size: clamp(14px, 3.5vw, 16px); margin-bottom: 20px; }
+
+  /* === ABOUT:双栏改单栏,居中 === */
+  .about-inner { grid-template-columns: 1fr; gap: 28px; }
+  .about-visual { width: 180px; height: 180px; border-radius: 28px; }
+  .about-visual svg { width: 100px; height: 100px; }
+  .about-copy { text-align: center; }
+  .about-copy .section-sub { margin: 0 auto 20px; }
+
+  /* === WORKS:卡片宽度适配手机,减小堆叠偏移 === */
+  .works-swap { width: min(340px, 90vw); height: 260px; margin: 60px auto 0; }
+  .swap-card {
+    width: min(320px, 86vw); height: 240px;
+    padding: 24px 26px; gap: 8px; border-radius: 22px;
+  }
+  .sc-title { font-size: 22px; }
+  .sc-desc { font-size: 13px; }
+  .sc-link { font-size: 14px; margin-top: 4px; }
+  .works-skeleton { width: min(340px, 90vw); height: 260px; }
+
+  /* === SHOWCASE:双栏改单栏,mockup在上文字在下 === */
+  .showcase-inner { grid-template-columns: 1fr; gap: 28px; }
+  .showcase-copy { text-align: center; }
+  .showcase-copy .section-title { font-size: clamp(24px, 6vw, 34px); }
+  .feats { text-align: left; gap: 14px; }
+  .feat-copy h3 { font-size: 15px; }
+  .feat-copy p { font-size: 12.5px; }
+  .mock-frame { max-width: 100%; margin: 0 auto; }
+  .mock-hint { font-size: 11px; }
+
+  /* === SKILLS:chips更紧凑 === */
+  .chips { gap: 10px; margin-top: 22px; }
+  .chip { font-size: 13px; padding: 10px 20px; }
+
+  /* === CONTACT:紧凑收尾 === */
+  .contact { padding: 80px 20px 140px; min-height: auto; }
+  .contact .section-title { font-size: clamp(30px, 8vw, 46px); }
+  .contact .section-sub { font-size: 14px; margin-bottom: 24px; }
+  .contact-links { gap: 12px; }
+
+  /* === 左侧玻璃按钮:手机上更小巧,半透明不挡内容 === */
+  .side-nav-glass {
+    left: 8px; padding: 6px 4px; gap: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 14px; opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  .side-nav-glass:hover { opacity: 1; }
+  .snv-btn { width: 26px; height: 26px; border-radius: 9px; }
+  .snv-btn svg { width: 14px; height: 14px; }
+
+  /* === 底部抽屉:手机端把手回归正常位置,丝滑上滑 === */
+  body[data-device="mobile"] .sheet-handle,
+  .footer-sheet .sheet-handle {
+    top: 0 !important;
+    height: 44px;
+    width: 100%;
+    left: 0;
+    transform: none;
+  }
+  body[data-device="mobile"] .sheet-handle-bar,
+  .footer-sheet .sheet-handle-bar {
+    transform: translateY(8px) !important;
+  }
+  body[data-device="mobile"] .sheet-handle:active .sheet-handle-bar,
+  .footer-sheet .sheet-handle:active .sheet-handle-bar {
+    transform: translateY(8px) scaleX(0.72) !important;
+  }
+  .footer-sheet {
+    transform: translateY(calc(100% - 44px));
+    padding: 44px 20px calc(24px + env(safe-area-inset-bottom));
+  }
+  .footer-cols { gap: 32px; }
+  .footer-col h4 { font-size: 11px; margin-bottom: 10px; }
+  .footer-col a { font-size: 11px; padding: 2px 0; }
+  .footer-bottom { font-size: 11px; padding-top: 16px; }
+
+  /* === 触控全局优化 === */
+  a, button { -webkit-tap-highlight-color: transparent; }
+  .btn, .chip, .snv-btn, .lang-toggle {
+    min-height: 44px; /* 苹果人机接口指南:最小触控区域 */
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .nav-links a { min-height: 44px; display: inline-flex; align-items: center; }
 }
 
 /* data-device 精细控制:触屏隐藏光标,平板/手机按钮保留(已缩小) */
